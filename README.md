@@ -318,14 +318,6 @@ VITE_SIGNALR_HUB_URL=http://localhost:5000/hubs/auction
 
 ---
 
-## 👨‍💻 Development Team
-
-| Role | Name |
-|------|------|
-| Full Stack Developer | Ayman |
-
----
-
 ## 📄 License
 
 This project is for educational purposes.

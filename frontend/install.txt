@@ -1,0 +1,52 @@
+# Go back to root ArtAuction folder
+cd ..
+
+# Create React app with Vite
+npm create vite@latest frontend -- --template react
+
+cd frontend
+npm install
+
+# Install all required packages
+npm install react-router-dom @reduxjs/toolkit react-redux
+npm install @tanstack/react-query axios
+npm install @microsoft/signalr
+npm install react-hook-form zod @hookform/resolvers
+npm install date-fns react-hot-toast lucide-react clsx
+
+# Install dev dependencies
+npm install -D tailwindcss postcss autoprefixer
+
+# Initialize Tailwind
+npx tailwindcss init -p
+
+
+//
+
+Configure Tailwind — edit tailwind.config.js:
+jsexport default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: { extend: {} },
+  plugins: [],
+}
+
+//
+
+Add Tailwind to src/index.css:
+css@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+//
+
+Create .env file inside frontend/:
+
+envVITE_API_URL=http://localhost:5000/api
+VITE_SIGNALR_HUB_URL=http://localhost:5000/hubs/auction
+
+//
+
+npm run dev

@@ -299,10 +299,51 @@ VITE_SIGNALR_HUB_URL=http://localhost:5000/hubs/auction
 |---------|-------|---------|
 | `Npgsql.EntityFrameworkCore.PostgreSQL` | Infrastructure | PostgreSQL + EF Core |
 | `MediatR` | Application | CQRS pattern |
-| `FluentValidation` | Application | Request validation |
-| `AutoMapper` | Application | Object mapping |
+| `FluentValidation.DependencyInjectionExtensions` | Application | Request validation |
+| `AutoMapper.Extensions.Microsoft.DependencyInjection` | Application | Object mapping |
 | `Microsoft.AspNetCore.SignalR` | API | Real-time WebSockets |
 | `Microsoft.AspNetCore.Authentication.JwtBearer` | API | JWT authentication |
+| `Microsoft.AspNetCore.Identity.EntityFrameworkCore` | Infrastructure | Identity management |
+| `Microsoft.EntityFrameworkCore.Design` | Infrastructure | EF Core design-time tools |
+| `Microsoft.EntityFrameworkCore.Tools` | Infrastructure | EF Core CLI tools |
+| `Microsoft.Extensions.Configuration` | Infrastructure | Configuration management |
+| `Microsoft.Extensions.DependencyInjection` | Infrastructure | Dependency injection |
+| `Microsoft.Extensions.Hosting` | Infrastructure | Hosting abstractions |
+| `System.IdentityModel.Tokens.Jwt` | Infrastructure/API | JWT token handling |
+| `Microsoft.AspNetCore.OpenApi` | API | OpenAPI/Swagger integration |
+| `Swashbuckle.AspNetCore` | API | Swagger UI |
+
+### Installation Commands
+
+To add these packages to your projects, use the following commands:
+
+**Application Layer:**
+```bash
+dotnet add src/ArtAuction.Application/ArtAuction.Application.csproj package AutoMapper.Extensions.Microsoft.DependencyInjection --version 12.0.1
+dotnet add src/ArtAuction.Application/ArtAuction.Application.csproj package FluentValidation.DependencyInjectionExtensions --version 11.9.0
+dotnet add src/ArtAuction.Application/ArtAuction.Application.csproj package MediatR --version 12.2.0
+```
+
+**Infrastructure Layer:**
+```bash
+dotnet add src/ArtAuction.Infrastructure/ArtAuction.Infrastructure.csproj package Microsoft.AspNetCore.Identity.EntityFrameworkCore --version 8.0.4
+dotnet add src/ArtAuction.Infrastructure/ArtAuction.Infrastructure.csproj package Microsoft.EntityFrameworkCore.Design --version 8.0.4
+dotnet add src/ArtAuction.Infrastructure/ArtAuction.Infrastructure.csproj package Microsoft.EntityFrameworkCore.Tools --version 8.0.4
+dotnet add src/ArtAuction.Infrastructure/ArtAuction.Infrastructure.csproj package Microsoft.Extensions.Configuration --version 8.0.0
+dotnet add src/ArtAuction.Infrastructure/ArtAuction.Infrastructure.csproj package Microsoft.Extensions.DependencyInjection --version 8.0.0
+dotnet add src/ArtAuction.Infrastructure/ArtAuction.Infrastructure.csproj package Microsoft.Extensions.Hosting --version 8.0.0
+dotnet add src/ArtAuction.Infrastructure/ArtAuction.Infrastructure.csproj package Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.4
+dotnet add src/ArtAuction.Infrastructure/ArtAuction.Infrastructure.csproj package System.IdentityModel.Tokens.Jwt --version 7.3.1
+```
+
+**API Layer:**
+```bash
+dotnet add src/ArtAuction.API/ArtAuction.API.csproj package Microsoft.AspNetCore.Authentication.JwtBearer --version 8.0.4
+dotnet add src/ArtAuction.API/ArtAuction.API.csproj package Microsoft.AspNetCore.OpenApi --version 8.0.25
+dotnet add src/ArtAuction.API/ArtAuction.API.csproj package Microsoft.AspNetCore.SignalR --version 1.2.9
+dotnet add src/ArtAuction.API/ArtAuction.API.csproj package Swashbuckle.AspNetCore --version 6.5.0
+dotnet add src/ArtAuction.API/ArtAuction.API.csproj package System.IdentityModel.Tokens.Jwt --version 7.3.1
+```
 
 ## 📦 Key npm Packages
 

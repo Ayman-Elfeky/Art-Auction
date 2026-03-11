@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArtAuction — DB Schema</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --border: #1e1e2e;
+            --accent: #c084fc;
+            --accent2: #f472b6;
+            --accent3: #38bdf8;
+            --accent4: #34d399;
+            --accent5: #fb923c;
+            --accent6: #facc15;
+            --accent7: #f87171;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --pk: #facc15;
+            --fk: #38bdf8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .legend {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .legend-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .badge-pk {
+            background: rgba(250, 204, 21, 0.15);
+            color: var(--pk);
+            border: 1px solid rgba(250, 204, 21, 0.3);
+        }
+
+        .badge-fk {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--fk);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .badge-field {
+            background: rgba(226, 232, 240, 0.08);
+            color: var(--muted);
+            border: 1px solid rgba(226, 232, 240, 0.1);
+        }
+
+        .schema-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .table-card {
+            background: var(--surface);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .table-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .table-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .card-users::before {
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+        }
+
+        .card-artworks::before {
+            background: linear-gradient(90deg, var(--accent2), var(--accent5));
+        }
+
+        .card-categories::before {
+            background: linear-gradient(90deg, var(--accent4), var(--accent3));
+        }
+
+        .card-tags::before {
+            background: linear-gradient(90deg, var(--accent3), var(--accent));
+        }
+
+        .card-bids::before {
+            background: linear-gradient(90deg, var(--accent5), var(--accent6));
+        }
+
+        .card-watchlist::before {
+            background: linear-gradient(90deg, var(--accent4), var(--accent6));
+        }
+
+        .card-notifications::before {
+            background: linear-gradient(90deg, var(--accent7), var(--accent2));
+        }
+
+        .table-header {
+            padding: 18px 20px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .icon-users {
+            background: rgba(192, 132, 252, 0.15);
+        }
+
+        .icon-artworks {
+            background: rgba(244, 114, 182, 0.15);
+        }
+
+        .icon-categories {
+            background: rgba(52, 211, 153, 0.15);
+        }
+
+        .icon-tags {
+            background: rgba(56, 189, 248, 0.15);
+        }
+
+        .icon-bids {
+            background: rgba(251, 146, 60, 0.15);
+        }
+
+        .icon-watchlist {
+            background: rgba(250, 204, 21, 0.15);
+        }
+
+        .icon-notifications {
+            background: rgba(248, 113, 113, 0.15);
+        }
+
+        .table-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .row-count {
+            margin-left: auto;
+            font-size: 0.7rem;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+
+        .table-fields {
+            padding: 8px 0;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            padding: 7px 20px;
+            gap: 10px;
+            transition: background 0.15s;
+        }
+
+        .field-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .field-row.divider {
+            border-top: 1px dashed rgba(255, 255, 255, 0.06);
+            margin-top: 4px;
+            padding-top: 11px;
+        }
+
+        .field-type-badge {
+            font-size: 0.62rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            min-width: 44px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .type-pk {
+            background: rgba(250, 204, 21, 0.12);
+            color: var(--pk);
+            border: 1px solid rgba(250, 204, 21, 0.25);
+        }
+
+        .type-fk {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--fk);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+
+        .type-str {
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--accent4);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .type-num {
+            background: rgba(251, 146, 60, 0.1);
+            color: var(--accent5);
+            border: 1px solid rgba(251, 146, 60, 0.2);
+        }
+
+        .type-bool {
+            background: rgba(192, 132, 252, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(192, 132, 252, 0.2);
+        }
+
+        .type-date {
+            background: rgba(244, 114, 182, 0.1);
+            color: var(--accent2);
+            border: 1px solid rgba(244, 114, 182, 0.2);
+        }
+
+        .type-enum {
+            background: rgba(250, 204, 21, 0.08);
+            color: #a78bfa;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        .field-name {
+            font-size: 0.82rem;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .field-name.pk-field {
+            color: var(--pk);
+            font-weight: 600;
+        }
+
+        .field-name.fk-field {
+            color: var(--fk);
+        }
+
+        .field-constraint {
+            font-size: 0.65rem;
+            color: var(--muted);
+            text-align: right;
+        }
+
+        .optional-badge {
+            font-size: 0.6rem;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1px 5px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        /* Relations Section */
+        .relations-section {
+            max-width: 1400px;
+            margin: 50px auto 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .relations-header {
+            padding: 20px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .relations-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .relations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 0;
+        }
+
+        .relation-item {
+            padding: 16px 28px;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .relation-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .rel-type {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .rel-one {
+            background: rgba(52, 211, 153, 0.12);
+            color: var(--accent4);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+
+        .rel-many {
+            background: rgba(192, 132, 252, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(192, 132, 252, 0.25);
+        }
+
+        .rel-desc {
+            font-size: 0.78rem;
+            color: var(--text);
+        }
+
+        .rel-desc span {
+            color: var(--accent3);
+            font-weight: 600;
+        }
+
+        .rel-arrow {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        /* Enums section */
+        .enums-section {
+            max-width: 1400px;
+            margin: 24px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .enum-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .enum-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Syne', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #a78bfa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .enum-tag {
+            font-size: 0.6rem;
+            background: rgba(167, 139, 250, 0.1);
+            color: #a78bfa;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .enum-values {
+            padding: 10px 0;
+        }
+
+        .enum-value {
+            display: flex;
+            align-items: center;
+            padding: 6px 18px;
+            gap: 12px;
+            font-size: 0.78rem;
+        }
+
+        .enum-num {
+            color: var(--accent5);
+            font-weight: 700;
+            min-width: 20px;
+            font-size: 0.7rem;
+        }
+
+        .enum-name {
+            color: var(--text);
+        }
+
+        .section-label {
+            max-width: 1400px;
+            margin: 40px auto 16px;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding-left: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>ArtAuction — Database Schema</h1>
+        <p>Entity Relationship Design · PostgreSQL · EF Core</p>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><span class="legend-badge badge-pk">PK</span> Primary Key</div>
+        <div class="legend-item"><span class="legend-badge badge-fk">FK</span> Foreign Key</div>
+        <div class="legend-item"><span class="legend-badge badge-field">?</span> Nullable / Optional</div>
+    </div>
+
+    <div class="section-label">📋 Tables</div>
+
+    <div class="schema-grid">
+
+        <!-- USERS -->
+        <div class="table-card card-users">
+            <div class="table-header">
+                <div class="table-icon icon-users">👤</div>
+                <div class="table-name">Users</div>
+                <div class="row-count">7 fields + nav</div>
+            </div>
+            <div class="table-fields">
+                <div class="field-row">
+                    <span class="field-type-badge type-pk">PK</span>
+                    <span class="field-name pk-field">Id</span>
+                    <span class="field-constraint">Guid</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">Username</span>
+                    <span class="field-constraint">unique</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">Email</span>
+                    <span class="field-constraint">unique</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">PasswordHash</span>
+                    <span class="field-constraint">bcrypt</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-enum">ENUM</span>
+                    <span class="field-name">Role</span>
+                    <span class="field-constraint">0/1/2</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-bool">BOOL</span>
+                    <span class="field-name">IsApproved</span>
+                    <span class="field-constraint">default false</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-bool">BOOL</span>
+                    <span class="field-name">IsActive</span>
+                    <span class="field-constraint">default true</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">ProfileImageUrl</span>
+                    <span class="optional-badge">?</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-date">DATE</span>
+                    <span class="field-name">CreatedAt</span>
+                    <span class="field-constraint">UTC</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-date">DATE</span>
+                    <span class="field-name">UpdatedAt</span>
+                    <span class="field-constraint">UTC</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORIES -->
+        <div class="table-card card-categories">
+            <div class="table-header">
+                <div class="table-icon icon-categories">🏷️</div>
+                <div class="table-name">Categories</div>
+                <div class="row-count">3 fields</div>
+            </div>
+            <div class="table-fields">
+                <div class="field-row">
+                    <span class="field-type-badge type-pk">PK</span>
+                    <span class="field-name pk-field">Id</span>
+                    <span class="field-constraint">Guid</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">Name</span>
+                    <span class="field-constraint">unique</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">Description</span>
+                    <span class="optional-badge">?</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ARTWORKS -->
+        <div class="table-card card-artworks">
+            <div class="table-header">
+                <div class="table-icon icon-artworks">🖼️</div>
+                <div class="table-name">Artworks</div>
+                <div class="row-count">13 fields</div>
+            </div>
+            <div class="table-fields">
+                <div class="field-row">
+                    <span class="field-type-badge type-pk">PK</span>
+                    <span class="field-name pk-field">Id</span>
+                    <span class="field-constraint">Guid</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-fk">FK</span>
+                    <span class="field-name fk-field">ArtistId</span>
+                    <span class="field-constraint">→ Users</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-fk">FK</span>
+                    <span class="field-name fk-field">CategoryId</span>
+                    <span class="field-constraint">→ Categories</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">Title</span>
+                    <span class="field-constraint">max 200</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">Description</span>
+                    <span class="field-constraint">text</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">ImageUrl</span>
+                    <span class="field-constraint">required</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-num">DEC</span>
+                    <span class="field-name">InitialPrice</span>
+                    <span class="field-constraint">≥ 0</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-num">DEC</span>
+                    <span class="field-name">BuyNowPrice</span>
+                    <span class="optional-badge">?</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-num">DEC</span>
+                    <span class="field-name">CurrentBid</span>
+                    <span class="field-constraint">≥ 0</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-date">DATE</span>
+                    <span class="field-name">AuctionStartTime</span>
+                    <span class="field-constraint">UTC</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-date">DATE</span>
+                    <span class="field-name">AuctionEndTime</span>
+                    <span class="field-constraint">UTC</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-enum">ENUM</span>
+                    <span class="field-name">Status</span>
+                    <span class="field-constraint">0–4</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-date">DATE</span>
+                    <span class="field-name">CreatedAt</span>
+                    <span class="field-constraint">UTC</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-date">DATE</span>
+                    <span class="field-name">UpdatedAt</span>
+                    <span class="field-constraint">UTC</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ARTWORK TAGS -->
+        <div class="table-card card-tags">
+            <div class="table-header">
+                <div class="table-icon icon-tags">🔖</div>
+                <div class="table-name">ArtworkTags</div>
+                <div class="row-count">3 fields</div>
+            </div>
+            <div class="table-fields">
+                <div class="field-row">
+                    <span class="field-type-badge type-pk">PK</span>
+                    <span class="field-name pk-field">Id</span>
+                    <span class="field-constraint">Guid</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-fk">FK</span>
+                    <span class="field-name fk-field">ArtworkId</span>
+                    <span class="field-constraint">→ Artworks</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">Tag</span>
+                    <span class="field-constraint">max 50</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BIDS -->
+        <div class="table-card card-bids">
+            <div class="table-header">
+                <div class="table-icon icon-bids">💰</div>
+                <div class="table-name">Bids</div>
+                <div class="row-count">6 fields</div>
+            </div>
+            <div class="table-fields">
+                <div class="field-row">
+                    <span class="field-type-badge type-pk">PK</span>
+                    <span class="field-name pk-field">Id</span>
+                    <span class="field-constraint">Guid</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-fk">FK</span>
+                    <span class="field-name fk-field">ArtworkId</span>
+                    <span class="field-constraint">→ Artworks</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-fk">FK</span>
+                    <span class="field-name fk-field">BuyerId</span>
+                    <span class="field-constraint">→ Users</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-num">DEC</span>
+                    <span class="field-name">Amount</span>
+                    <span class="field-constraint">≥ 0</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-date">DATE</span>
+                    <span class="field-name">PlacedAt</span>
+                    <span class="field-constraint">UTC</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-bool">BOOL</span>
+                    <span class="field-name">IsWinning</span>
+                    <span class="field-constraint">default false</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- WATCHLIST -->
+        <div class="table-card card-watchlist">
+            <div class="table-header">
+                <div class="table-icon icon-watchlist">❤️</div>
+                <div class="table-name">Watchlist</div>
+                <div class="row-count">4 fields</div>
+            </div>
+            <div class="table-fields">
+                <div class="field-row">
+                    <span class="field-type-badge type-pk">PK</span>
+                    <span class="field-name pk-field">Id</span>
+                    <span class="field-constraint">Guid</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-fk">FK</span>
+                    <span class="field-name fk-field">BuyerId</span>
+                    <span class="field-constraint">→ Users</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-fk">FK</span>
+                    <span class="field-name fk-field">ArtworkId</span>
+                    <span class="field-constraint">→ Artworks</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-date">DATE</span>
+                    <span class="field-name">AddedAt</span>
+                    <span class="field-constraint">UTC</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div class="table-card card-notifications">
+            <div class="table-header">
+                <div class="table-icon icon-notifications">🔔</div>
+                <div class="table-name">Notifications</div>
+                <div class="row-count">8 fields</div>
+            </div>
+            <div class="table-fields">
+                <div class="field-row">
+                    <span class="field-type-badge type-pk">PK</span>
+                    <span class="field-name pk-field">Id</span>
+                    <span class="field-constraint">Guid</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-fk">FK</span>
+                    <span class="field-name fk-field">UserId</span>
+                    <span class="field-constraint">→ Users</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-fk">FK</span>
+                    <span class="field-name fk-field">RelatedArtworkId</span>
+                    <span class="optional-badge">?</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">Title</span>
+                    <span class="field-constraint">max 200</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-str">STR</span>
+                    <span class="field-name">Message</span>
+                    <span class="field-constraint">text</span>
+                </div>
+                <div class="field-row divider">
+                    <span class="field-type-badge type-enum">ENUM</span>
+                    <span class="field-name">Type</span>
+                    <span class="field-constraint">0–5</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-bool">BOOL</span>
+                    <span class="field-name">IsRead</span>
+                    <span class="field-constraint">default false</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-type-badge type-date">DATE</span>
+                    <span class="field-name">CreatedAt</span>
+                    <span class="field-constraint">UTC</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RELATIONS -->
+    <div class="section-label">🔗 Relationships</div>
+
+    <div class="relations-section">
+        <div class="relations-header">
+            <span>🔗</span>
+            <h2>Foreign Key Relationships</h2>
+        </div>
+        <div class="relations-grid">
+            <div class="relation-item">
+                <span class="rel-type rel-one">1 → MANY</span>
+                <span class="rel-desc"><span>Users</span> (Artist) → <span>Artworks</span></span>
+                <span class="rel-arrow">⟶</span>
+                <span class="field-constraint">One artist has many artworks</span>
+            </div>
+            <div class="relation-item">
+                <span class="rel-type rel-one">1 → MANY</span>
+                <span class="rel-desc"><span>Categories</span> → <span>Artworks</span></span>
+                <span class="rel-arrow">⟶</span>
+                <span class="field-constraint">One category, many artworks</span>
+            </div>
+            <div class="relation-item">
+                <span class="rel-type rel-one">1 → MANY</span>
+                <span class="rel-desc"><span>Artworks</span> → <span>ArtworkTags</span></span>
+                <span class="rel-arrow">⟶</span>
+                <span class="field-constraint">One artwork, many tags</span>
+            </div>
+            <div class="relation-item">
+                <span class="rel-type rel-one">1 → MANY</span>
+                <span class="rel-desc"><span>Artworks</span> → <span>Bids</span></span>
+                <span class="rel-arrow">⟶</span>
+                <span class="field-constraint">One artwork, many bids</span>
+            </div>
+            <div class="relation-item">
+                <span class="rel-type rel-one">1 → MANY</span>
+                <span class="rel-desc"><span>Users</span> (Buyer) → <span>Bids</span></span>
+                <span class="rel-arrow">⟶</span>
+                <span class="field-constraint">One buyer, many bids</span>
+            </div>
+            <div class="relation-item">
+                <span class="rel-type rel-many">MANY → MANY</span>
+                <span class="rel-desc"><span>Users</span> ↔ <span>Artworks</span></span>
+                <span class="rel-arrow">⟷</span>
+                <span class="field-constraint">Via Watchlist table</span>
+            </div>
+            <div class="relation-item">
+                <span class="rel-type rel-one">1 → MANY</span>
+                <span class="rel-desc"><span>Users</span> → <span>Notifications</span></span>
+                <span class="rel-arrow">⟶</span>
+                <span class="field-constraint">One user, many notifications</span>
+            </div>
+            <div class="relation-item">
+                <span class="rel-type rel-one">1 → MANY</span>
+                <span class="rel-desc"><span>Artworks</span> → <span>Notifications</span></span>
+                <span class="rel-arrow">⟶</span>
+                <span class="field-constraint">Optional artwork reference</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ENUMS -->
+    <div class="section-label">📌 Enumerations</div>
+
+    <div class="enums-section">
+
+        <div class="enum-card">
+            <div class="enum-header">
+                <span>UserRole</span>
+                <span class="enum-tag">ENUM</span>
+            </div>
+            <div class="enum-values">
+                <div class="enum-value"><span class="enum-num">0</span><span class="enum-name">Admin</span></div>
+                <div class="enum-value"><span class="enum-num">1</span><span class="enum-name">Artist</span></div>
+                <div class="enum-value"><span class="enum-num">2</span><span class="enum-name">Buyer</span></div>
+            </div>
+        </div>
+
+        <div class="enum-card">
+            <div class="enum-header">
+                <span>ArtworkStatus</span>
+                <span class="enum-tag">ENUM</span>
+            </div>
+            <div class="enum-values">
+                <div class="enum-value"><span class="enum-num">0</span><span class="enum-name">Pending</span></div>
+                <div class="enum-value"><span class="enum-num">1</span><span class="enum-name">Approved</span></div>
+                <div class="enum-value"><span class="enum-num">2</span><span class="enum-name">Rejected</span></div>
+                <div class="enum-value"><span class="enum-num">3</span><span class="enum-name">Active</span></div>
+                <div class="enum-value"><span class="enum-num">4</span><span class="enum-name">Ended</span></div>
+            </div>
+        </div>
+
+        <div class="enum-card">
+            <div class="enum-header">
+                <span>NotificationType</span>
+                <span class="enum-tag">ENUM</span>
+            </div>
+            <div class="enum-values">
+                <div class="enum-value"><span class="enum-num">0</span><span class="enum-name">BidPlaced</span></div>
+                <div class="enum-value"><span class="enum-num">1</span><span class="enum-name">AuctionWon</span></div>
+                <div class="enum-value"><span class="enum-num">2</span><span class="enum-name">ArtworkApproved</span>
+                </div>
+                <div class="enum-value"><span class="enum-num">3</span><span class="enum-name">ArtworkRejected</span>
+                </div>
+                <div class="enum-value"><span class="enum-num">4</span><span class="enum-name">AccountApproved</span>
+                </div>
+                <div class="enum-value"><span class="enum-num">5</span><span class="enum-name">AccountRejected</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div
+        style="text-align:center; margin-top: 50px; padding-bottom: 40px; color: #334155; font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;">
+        ArtAuction · PostgreSQL · Entity Framework Core · Clean Architecture
+    </div>
+
+</body>
+
+</html>

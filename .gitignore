@@ -156,6 +156,7 @@ local.settings.json
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
+*.txt
 
 # Folder config file
 Desktop.ini

@@ -1,6 +1,6 @@
-@ArtAuction.API_HostAddress = http://localhost:5226
+@HostAddress = http://localhost:5226
 
-GET {{ArtAuction.API_HostAddress}}/weatherforecast/
+GET {{HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

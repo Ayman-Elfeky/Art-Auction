@@ -88,28 +88,6 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-*.exe
-*.dll
-*.so
-*.dylib
-*.pdb
-*.cache
-*.txt
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
 # Production builds
 dist/
 build/

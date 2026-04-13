@@ -1,0 +1,21 @@
+// bid module
+import @models/bid.model
+
+module bid {
+  description: ""
+  prefix: /api/bids
+
+  action CreateBid {
+    method: POST
+    path: /
+    input: Bid
+    output: string
+  }
+  action GetBids {
+    method: GET
+    path: /artworks/:id
+    output: Bid[]
+  }
+}
+
+

@@ -1,6 +1,5 @@
 using ArtAuction.Application.Features.Artworks.Commands.CreateArtwork;
 using ArtAuction.Application.Features.Artworks.Commands.DeleteArtwork;
-using ArtAuction.Application.Features.Artworks.Commands.ExtendAuctionTime;
 using ArtAuction.Application.Features.Artworks.Commands.UpdateArtwork;
 using ArtAuction.Application.Features.Artworks.DTOs;
 using ArtAuction.Application.Features.Artworks.Queries.GetArtworkById;
@@ -163,7 +162,7 @@ public class ArtworksController : ControllerBase
             return Unauthorized("Invalid user ID");
         }
 
-        var result = await _mediator.Send(new ExtendAuctionTimeCommand(id, dto.NewEndTime, userId));
+        var result = await _mediator.Send(new ArtAuction.Application.Features.Artworks.Commands.ExtendAuctionTime.ExtendAuctionTimeCommand(id, dto.NewEndTime, userId));
         if (!result.IsSuccess)
         {
             return BadRequest(result.Error);

@@ -45,8 +45,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Au
             Email = request.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             Role = request.Role,
-            // Buyers are auto-approved, Artists need admin approval
-            IsApproved = request.Role == UserRole.Buyer,
+            // For testing: Auto-approve all users. In production, artists need admin approval
+            IsApproved = true,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow

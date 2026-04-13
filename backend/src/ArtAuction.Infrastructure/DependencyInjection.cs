@@ -1,9 +1,10 @@
+using ArtAuction.Application.Common.Interfaces;
+using ArtAuction.Infrastructure.Persistence;
+using ArtAuction.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-// using ArtAuction.Application.Common.Interfaces;
-// using ArtAuction.Infrastructure.Persistence;
-// using ArtAuction.Infrastructure.Services;
 
 namespace ArtAuction.Infrastructure;
 
@@ -14,20 +15,20 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         // Database
-        // services.AddDbContext<ApplicationDbContext>(options =>
-        //     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
 
-        // services.AddScoped<IApplicationDbContext>(provider =>
-        //     provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IApplicationDbContext>(provider =>
+            provider.GetRequiredService<ApplicationDbContext>());
 
-        // // Services
-        // services.AddScoped<IJwtService, JwtService>();
-        // services.AddScoped<IFileStorageService, AZUREStorageService>();
-        // services.AddScoped<INotificationService, NotificationService>();
-        // services.AddScoped<IAuctionHubService, AuctionHubService>();
+        // Services
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IFileStorageService, FileStorageService>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IAuctionHubService, AuctionHubService>();
 
-        // // Background service to auto-end auctions
-        // services.AddHostedService<AuctionBackgroundService>();
+        // Background service to auto-end auctions
+        services.AddHostedService<AuctionBackgroundService>();
 
         return services;
     }

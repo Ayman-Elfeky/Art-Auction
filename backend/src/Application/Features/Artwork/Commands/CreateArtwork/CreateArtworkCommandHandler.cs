@@ -37,11 +37,31 @@ public class CreateArtworkCommandHandler : IRequestHandler<CreateArtworkCommand,
             return Result<ArtworkDto>.Failure("Artist account must be approved before creating artworks");
         }
 
-        // 2. Verify category exists
-        var category = await _context.Categories.FindAsync(new object[] { request.Dto.CategoryId }, cancellationToken);
-        if (category == null)
+        // Prevent duplicate artworks for the same artist by title (case-insensitive).
+        var normalizedTitle = request.Dto.Title.Trim().ToLowerInvariant();
+        var exists = await _context.Artworks
+            .AnyAsync(a => a.ArtistId == request.ArtistId && a.Title.ToLower() == normalizedTitle, cancellationToken);
+        if (exists)
         {
-            return Result<ArtworkDto>.Failure("Category not found");
+            return Result<ArtworkDto>.Failure("Artwork with the same title already exists for this artist");
+        }
+
+        // 2. Resolve (or create) category by name
+        var normalizedCategoryName = request.Dto.CategoryName.Trim();
+        var normalizedLookup = normalizedCategoryName.ToLowerInvariant();
+        var category = await _context.Categories
+            .FirstOrDefaultAsync(c => c.Name.ToLower() == normalizedLookup, cancellationToken);
+
+        if (category is null)
+        {
+            category = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = normalizedCategoryName,
+                Description = string.Empty
+            };
+
+            _context.Categories.Add(category);
         }
 
         // 3. Create artwork with Pending status
@@ -51,7 +71,7 @@ public class CreateArtworkCommandHandler : IRequestHandler<CreateArtworkCommand,
             Title = request.Dto.Title,
             Description = request.Dto.Description,
             ArtistId = request.ArtistId,
-            CategoryId = request.Dto.CategoryId,
+            CategoryId = category.Id,
             InitialPrice = request.Dto.InitialPrice,
             BuyNowPrice = request.Dto.BuyNowPrice,
             CurrentBid = request.Dto.InitialPrice,
@@ -80,6 +100,7 @@ public class CreateArtworkCommandHandler : IRequestHandler<CreateArtworkCommand,
             Id = artwork.Id,
             Title = artwork.Title,
             ArtistName = artist.Username,
+            CategoryName = category.Name,
             InitialPrice = artwork.InitialPrice,
             CurrentBid = artwork.CurrentBid,
             AuctionEndTime = artwork.AuctionEndTime,

@@ -1,5 +1,7 @@
 ﻿using ArtAuction.Application.Common.Interfaces;
+using ArtAuction.Infrastructure.Notifications;
 using ArtAuction.Infrastructure.Persistence;
+using ArtAuction.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,10 +18,12 @@ public static class DependencyInjection
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found.");
 
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseNpgsql(connectionString));
 
         services.AddScoped<IApplicationDbContext>(provider =>
             provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<INotificationService, NotificationService>();
 
         return services;
     }

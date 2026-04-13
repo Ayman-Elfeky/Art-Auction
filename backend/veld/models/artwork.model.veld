@@ -5,6 +5,7 @@ model Artwork {
   id:           uuid
   title:        string
   artistName:   string
+  categoryName: string
   initialPrice: float
   currentBid:   float
   auctionEndTime: datetime
@@ -40,7 +41,7 @@ model CreateArtworkInput {
   buyNowPrice?:     float
   auctionStartTime: datetime
   auctionEndTime:   datetime
-  categoryId:       uuid
+  categoryName:     string
   tags:             string[]
   imageUrl:         string
 }

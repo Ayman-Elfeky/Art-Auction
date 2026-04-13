@@ -49,6 +49,21 @@ public class AuthController : ControllerBase
         }
     }
 
+    /// <summary>Register a new artist account (pending approval)</summary>
+    [HttpPost("register/artist")]
+    public async Task<IActionResult> RegisterArtist([FromBody] RegisterArtistInput input)
+    {
+        try
+        {
+            var result = await _service.RegisterArtist(input);
+            return StatusCode(201, result);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { error = e.Message });
+        }
+    }
+
     /// <summary>Get the currently authenticated user</summary>
     [HttpGet("me")]
     public async Task<IActionResult> GetMe()

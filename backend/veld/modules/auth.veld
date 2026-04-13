@@ -27,6 +27,15 @@ module Auth {
     middleware:   RateLimit
   }
 
+  action RegisterArtist {
+    description: "Register a new artist account (pending approval)"
+    method:      POST
+    path:        /register/artist
+    input:       RegisterArtistInput
+    output:      AuthToken
+    middleware:   RateLimit
+  }
+
   action GetMe {
     description: "Get the currently authenticated user"
     method:      GET

@@ -14,6 +14,9 @@ public interface IAuthService
     /// <summary>Register a new account</summary>
     Task<AuthToken> Register(RegisterInput input);
 
+    /// <summary>Register a new artist account (pending approval)</summary>
+    Task<AuthToken> RegisterArtist(RegisterArtistInput input);
+
     /// <summary>Get the currently authenticated user</summary>
     Task<User> GetMe();
 

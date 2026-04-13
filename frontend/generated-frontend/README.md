@@ -5,10 +5,11 @@
 
 ## Modules
 
-- **Admin** — Admin review and approval endpoints (6 actions)
-- **Artworks** — Artwork browsing and management (7 actions)
-- **Auth** — Authentication and session management (4 actions)
 - **Users** — User management (5 actions)
+- **Auth** — Authentication and session management (5 actions)
+- **Artworks** — Artwork browsing and management (7 actions)
+- **Admin** — Admin review and approval endpoints (6 actions)
+- **Categories** — Category management (2 actions)
 
 ## Regenerate
 

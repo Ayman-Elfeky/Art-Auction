@@ -15,6 +15,9 @@ public class Artwork
     [JsonPropertyName("artistName")]
     public string ArtistName { get; set; }
 
+    [JsonPropertyName("categoryName")]
+    public string CategoryName { get; set; }
+
     [JsonPropertyName("initialPrice")]
     public double InitialPrice { get; set; }
 
@@ -32,11 +35,12 @@ public class Artwork
 
     public Artwork() { }
 
-    public Artwork(Guid id, string title, string artistName, double initialPrice, double currentBid, DateTime auctionEndTime, string status, string imageUrl)
+    public Artwork(Guid id, string title, string artistName, string categoryName, double initialPrice, double currentBid, DateTime auctionEndTime, string status, string imageUrl)
     {
         Id = id;
         Title = title;
         ArtistName = artistName;
+        CategoryName = categoryName;
         InitialPrice = initialPrice;
         CurrentBid = currentBid;
         AuctionEndTime = auctionEndTime;

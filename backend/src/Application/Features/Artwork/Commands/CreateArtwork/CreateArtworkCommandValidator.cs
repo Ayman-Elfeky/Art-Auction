@@ -23,7 +23,7 @@ public class CreateArtworkCommandValidator : AbstractValidator<CreateArtworkComm
             .GreaterThan(x => x.Dto.AuctionStartTime)
             .WithMessage("Auction end time must be after start time");
 
-        RuleFor(x => x.Dto.CategoryId)
+        RuleFor(x => x.Dto.CategoryName)
             .NotEmpty().WithMessage("Category is required");
 
         RuleFor(x => x.Dto.ImageUrl)

@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { authApi } from '../client/authApi';
 import { VeldApiError } from '../client/_internal';
-import type { LoginInput, AuthToken, RegisterInput, User, SuccessMessage, UserRole } from '../types';
+import type { LoginInput, AuthToken, RegisterInput, RegisterArtistInput, User, SuccessMessage, UserRole } from '../types';
 
 /** Log in with credentials */
 export function useLogin(options?: Omit<UseMutationOptions<AuthToken, VeldApiError, { input: LoginInput }>, 'mutationFn'>) {
@@ -23,6 +23,19 @@ export function useRegister(options?: Omit<UseMutationOptions<AuthToken, VeldApi
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (vars: { input: RegisterInput }) => authApi.register(vars.input),
+    ...options,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({ queryKey: ['Auth'] });
+      options?.onSuccess?.(...args);
+    },
+  });
+}
+
+/** Register a new artist account (pending approval) */
+export function useRegisterArtist(options?: Omit<UseMutationOptions<AuthToken, VeldApiError, { input: RegisterArtistInput }>, 'mutationFn'>) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { input: RegisterArtistInput }) => authApi.registerArtist(vars.input),
     ...options,
     onSuccess: (...args) => {
       queryClient.invalidateQueries({ queryKey: ['Auth'] });
@@ -61,6 +74,7 @@ export const authQueryKeys = {
 export const authHooks = {
   useLogin,
   useRegister,
+  useRegisterArtist,
   useGetMe,
   useLogout,
 };

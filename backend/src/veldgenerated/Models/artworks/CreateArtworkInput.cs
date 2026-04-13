@@ -25,8 +25,8 @@ public class CreateArtworkInput
     [JsonPropertyName("auctionEndTime")]
     public DateTime AuctionEndTime { get; set; }
 
-    [JsonPropertyName("categoryId")]
-    public Guid CategoryId { get; set; }
+    [JsonPropertyName("categoryName")]
+    public string CategoryName { get; set; }
 
     [JsonPropertyName("tags")]
     public List<string> Tags { get; set; }
@@ -36,7 +36,7 @@ public class CreateArtworkInput
 
     public CreateArtworkInput() { }
 
-    public CreateArtworkInput(string title, string description, double initialPrice, double? buyNowPrice, DateTime auctionStartTime, DateTime auctionEndTime, Guid categoryId, List<string> tags, string imageUrl)
+    public CreateArtworkInput(string title, string description, double initialPrice, double? buyNowPrice, DateTime auctionStartTime, DateTime auctionEndTime, string categoryName, List<string> tags, string imageUrl)
     {
         Title = title;
         Description = description;
@@ -44,7 +44,7 @@ public class CreateArtworkInput
         BuyNowPrice = buyNowPrice;
         AuctionStartTime = auctionStartTime;
         AuctionEndTime = auctionEndTime;
-        CategoryId = categoryId;
+        CategoryName = categoryName;
         Tags = tags;
         ImageUrl = imageUrl;
     }

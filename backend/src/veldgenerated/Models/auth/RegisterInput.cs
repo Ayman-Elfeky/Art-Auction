@@ -15,12 +15,16 @@ public class RegisterInput
     [JsonPropertyName("password")]
     public string Password { get; set; }
 
+    [JsonPropertyName("role")]
+    public string? Role { get; set; }
+
     public RegisterInput() { }
 
-    public RegisterInput(string email, string name, string password)
+    public RegisterInput(string email, string name, string password, string? role)
     {
         Email = email;
         Name = name;
         Password = password;
+        Role = role;
     }
 }

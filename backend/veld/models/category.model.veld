@@ -1,0 +1,14 @@
+// Category API contracts.
+
+model Category {
+  description: "Artwork category"
+  id:          uuid
+  name:        string
+  description: string
+}
+
+model CreateCategoryInput {
+  description: "Payload to create category"
+  name:        string
+  description?: string
+}

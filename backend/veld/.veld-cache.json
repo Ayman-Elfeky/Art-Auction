@@ -1,14 +1,16 @@
 {
   "fileHashes": {
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\app.veld": "2d9c9bd3d9e901d5313d6c6fcdfebd2246cffac845cacd1c55442002fafe4ac6",
+    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\app.veld": "d13741edadabfca9472be768f4a1ab3610ccc9a2d892924d5feb448975010004",
     "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\admin.model.veld": "6b6a0ac8942291e3aa55a15dc445075ca936607126208a5ed889cba266b4f0d3",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\artwork.model.veld": "aa3c0fb656ae915391bb36d5bf1785a02dfb80dd923de0957b7898496c056305",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\auth.model.veld": "03e5d74e28ee245ce03e0e9344afc87082ac03f08c8ecb9ac0e5d4a90150ba48",
+    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\artwork.model.veld": "cb18a3085539a878512b475f7261e2f85f043d6bf253c3e4f4380cb8e3c42bd5",
+    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\auth.model.veld": "6bc641a858c30f63a0aa383163ad5f8bf3ba8dde4f1133870cfa4b63ea769ce1",
+    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\category.model.veld": "f801f185ff9524bc76c8bb50958473a328080500befcb134240a62b0ef1c69a6",
     "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\common.model.veld": "45258486359905b41b1fed70ac67d94fff20a53694a8f4f73672dbc0d0f044ce",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\user.model.veld": "828db2ef3c21c2b7bf07ff94d5fad5c2e9e0ddc9aca64a0a2c0dbe67dbe078c4",
+    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\user.model.veld": "458fcd9b0d8a65a645c11d8127eda3914663a82a25454c9ada4c47d06437af59",
     "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\admin.veld": "8fe6fbcb3ca1fd89c5ab6b14a41c467b9904d56e4490eb01825ae5f90489440e",
     "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\artwork.veld": "e6d5e1be2ae6b43be7560588247c462c9d733682fb97852f4776732e62d658df",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\auth.veld": "6c5520aa221e5b0c012bfe62c10bb891cd6f0c6c4fd39b558df75cfe572598ef",
+    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\auth.veld": "bd4fef922bbd731c4154649165953383d53a8c575992a0eed063aa121b00309a",
+    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\category.veld": "3dc01a496865611337cb2cecfdd29db3c11d72dfb321819e49580cb155277459",
     "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\user.veld": "54964c1faa6e3f95d3a206d1306fd88dd20e889b40f72467c69d5f98ac540914"
   }
 }

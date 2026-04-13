@@ -1,6 +1,15 @@
-﻿namespace Application;
+﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
-public class Class1
+namespace ArtAuction.Application;
+
+public static class DependencyInjection
 {
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
 
+        return services;
+    }
 }

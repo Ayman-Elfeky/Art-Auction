@@ -2,76 +2,117 @@
   "version": 1,
   "modules": [
     {
-      "name": "Admin",
-      "description": "Admin review and approval endpoints",
-      "prefix": "/api/admin",
+      "name": "Users",
+      "description": "User management",
+      "prefix": "/api/users",
       "actions": [
         {
-          "name": "GetPendingArtists",
-          "description": "Get all artists waiting for approval",
+          "name": "ListUsers",
+          "description": "List all users with optional filters",
           "method": "GET",
-          "path": "/artists/pending",
+          "path": "/",
           "input": "",
-          "output": "PendingArtist",
+          "output": "User",
           "outputArray": true,
-          "middleware": [
-            "RequireAdmin"
-          ]
+          "query": "ListQuery",
+          "middleware": []
         },
         {
-          "name": "ApproveArtist",
-          "description": "Approve an artist account",
-          "method": "PUT",
-          "path": "/artists/:id/approve",
-          "input": "",
-          "output": "AdminActionMessage",
-          "middleware": [
-            "RequireAdmin"
-          ]
-        },
-        {
-          "name": "RejectArtist",
-          "description": "Reject an artist account",
-          "method": "PUT",
-          "path": "/artists/:id/reject",
-          "input": "",
-          "output": "AdminActionMessage",
-          "middleware": [
-            "RequireAdmin"
-          ]
-        },
-        {
-          "name": "GetPendingArtworks",
-          "description": "Get all artworks waiting for approval",
+          "name": "GetUser",
+          "description": "Get a single user by ID",
           "method": "GET",
-          "path": "/artworks/pending",
+          "path": "/:id",
           "input": "",
-          "output": "PendingArtwork",
-          "outputArray": true,
+          "output": "User",
+          "middleware": []
+        },
+        {
+          "name": "CreateUser",
+          "description": "Create a new user",
+          "method": "POST",
+          "path": "/",
+          "input": "CreateUserInput",
+          "output": "User",
+          "middleware": []
+        },
+        {
+          "name": "UpdateUser",
+          "description": "Update an existing user",
+          "method": "PUT",
+          "path": "/:id",
+          "input": "UpdateUserInput",
+          "output": "User",
+          "middleware": []
+        },
+        {
+          "name": "DeleteUser",
+          "description": "Delete a user",
+          "method": "DELETE",
+          "path": "/:id",
+          "input": "",
+          "output": "SuccessMessage",
+          "middleware": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication and session management",
+      "prefix": "/api/auth",
+      "actions": [
+        {
+          "name": "Login",
+          "description": "Log in with credentials",
+          "method": "POST",
+          "path": "/login",
+          "input": "LoginInput",
+          "output": "AuthToken",
           "middleware": [
-            "RequireAdmin"
+            "RateLimit"
           ]
         },
         {
-          "name": "ApproveArtwork",
-          "description": "Approve an artwork",
-          "method": "PUT",
-          "path": "/artworks/:id/approve",
-          "input": "",
-          "output": "AdminActionMessage",
+          "name": "Register",
+          "description": "Register a new account",
+          "method": "POST",
+          "path": "/register",
+          "input": "RegisterInput",
+          "output": "AuthToken",
           "middleware": [
-            "RequireAdmin"
+            "RateLimit"
           ]
         },
         {
-          "name": "RejectArtwork",
-          "description": "Reject an artwork",
-          "method": "PUT",
-          "path": "/artworks/:id/reject",
-          "input": "",
-          "output": "AdminActionMessage",
+          "name": "RegisterArtist",
+          "description": "Register a new artist account (pending approval)",
+          "method": "POST",
+          "path": "/register/artist",
+          "input": "RegisterArtistInput",
+          "output": "AuthToken",
           "middleware": [
-            "RequireAdmin"
+            "RateLimit"
+          ]
+        },
+        {
+          "name": "GetMe",
+          "description": "Get the currently authenticated user",
+          "method": "GET",
+          "path": "/me",
+          "input": "",
+          "output": "User",
+          "middleware": [
+            "RequireAuth"
+          ]
+        },
+        {
+          "name": "Logout",
+          "description": "Log out and invalidate session",
+          "method": "POST",
+          "path": "/logout",
+          "input": "",
+          "output": "SuccessMessage",
+          "middleware": [
+            "RequireAuth"
           ]
         }
       ]
@@ -157,157 +198,139 @@
       ]
     },
     {
-      "name": "Auth",
-      "description": "Authentication and session management",
-      "prefix": "/api/auth",
+      "name": "Admin",
+      "description": "Admin review and approval endpoints",
+      "prefix": "/api/admin",
       "actions": [
         {
-          "name": "Login",
-          "description": "Log in with credentials",
-          "method": "POST",
-          "path": "/login",
-          "input": "LoginInput",
-          "output": "AuthToken",
-          "middleware": [
-            "RateLimit"
-          ]
-        },
-        {
-          "name": "Register",
-          "description": "Register a new account",
-          "method": "POST",
-          "path": "/register",
-          "input": "RegisterInput",
-          "output": "AuthToken",
-          "middleware": [
-            "RateLimit"
-          ]
-        },
-        {
-          "name": "GetMe",
-          "description": "Get the currently authenticated user",
+          "name": "GetPendingArtists",
+          "description": "Get all artists waiting for approval",
           "method": "GET",
-          "path": "/me",
+          "path": "/artists/pending",
           "input": "",
-          "output": "User",
+          "output": "PendingArtist",
+          "outputArray": true,
           "middleware": [
-            "RequireAuth"
+            "RequireAdmin"
           ]
         },
         {
-          "name": "Logout",
-          "description": "Log out and invalidate session",
-          "method": "POST",
-          "path": "/logout",
+          "name": "ApproveArtist",
+          "description": "Approve an artist account",
+          "method": "PUT",
+          "path": "/artists/:id/approve",
           "input": "",
-          "output": "SuccessMessage",
+          "output": "AdminActionMessage",
           "middleware": [
-            "RequireAuth"
+            "RequireAdmin"
+          ]
+        },
+        {
+          "name": "RejectArtist",
+          "description": "Reject an artist account",
+          "method": "PUT",
+          "path": "/artists/:id/reject",
+          "input": "",
+          "output": "AdminActionMessage",
+          "middleware": [
+            "RequireAdmin"
+          ]
+        },
+        {
+          "name": "GetPendingArtworks",
+          "description": "Get all artworks waiting for approval",
+          "method": "GET",
+          "path": "/artworks/pending",
+          "input": "",
+          "output": "PendingArtwork",
+          "outputArray": true,
+          "middleware": [
+            "RequireAdmin"
+          ]
+        },
+        {
+          "name": "ApproveArtwork",
+          "description": "Approve an artwork",
+          "method": "PUT",
+          "path": "/artworks/:id/approve",
+          "input": "",
+          "output": "AdminActionMessage",
+          "middleware": [
+            "RequireAdmin"
+          ]
+        },
+        {
+          "name": "RejectArtwork",
+          "description": "Reject an artwork",
+          "method": "PUT",
+          "path": "/artworks/:id/reject",
+          "input": "",
+          "output": "AdminActionMessage",
+          "middleware": [
+            "RequireAdmin"
           ]
         }
       ]
     },
     {
-      "name": "Users",
-      "description": "User management",
-      "prefix": "/api/users",
+      "name": "Categories",
+      "description": "Category management",
+      "prefix": "/api/categories",
       "actions": [
         {
-          "name": "ListUsers",
-          "description": "List all users with optional filters",
+          "name": "ListCategories",
+          "description": "List all categories",
           "method": "GET",
           "path": "/",
           "input": "",
-          "output": "User",
+          "output": "Category",
           "outputArray": true,
-          "query": "ListQuery",
           "middleware": []
         },
         {
-          "name": "GetUser",
-          "description": "Get a single user by ID",
-          "method": "GET",
-          "path": "/:id",
-          "input": "",
-          "output": "User",
-          "middleware": []
-        },
-        {
-          "name": "CreateUser",
-          "description": "Create a new user",
+          "name": "CreateCategory",
+          "description": "Create category by name",
           "method": "POST",
           "path": "/",
-          "input": "CreateUserInput",
-          "output": "User",
-          "middleware": []
-        },
-        {
-          "name": "UpdateUser",
-          "description": "Update an existing user",
-          "method": "PUT",
-          "path": "/:id",
-          "input": "UpdateUserInput",
-          "output": "User",
-          "middleware": []
-        },
-        {
-          "name": "DeleteUser",
-          "description": "Delete a user",
-          "method": "DELETE",
-          "path": "/:id",
-          "input": "",
-          "output": "SuccessMessage",
-          "middleware": []
+          "input": "CreateCategoryInput",
+          "output": "Category",
+          "middleware": [
+            "RequireAdmin"
+          ]
         }
       ]
     }
   ],
   "models": [
     {
-      "name": "PendingArtist",
-      "description": "Artist account waiting for admin approval",
+      "name": "User",
+      "description": "A platform user",
       "fields": [
         {
           "name": "id",
           "type": "uuid"
-        },
-        {
-          "name": "username",
-          "type": "string"
         },
         {
           "name": "email",
           "type": "string"
         },
         {
-          "name": "createdAt",
-          "type": "datetime"
-        }
-      ]
-    },
-    {
-      "name": "PendingArtwork",
-      "description": "Artwork waiting for admin approval",
-      "fields": [
-        {
-          "name": "id",
-          "type": "uuid"
-        },
-        {
-          "name": "title",
+          "name": "name",
           "type": "string"
         },
         {
-          "name": "description",
-          "type": "string"
+          "name": "bio",
+          "type": "string",
+          "optional": true
         },
         {
-          "name": "initialPrice",
-          "type": "float"
+          "name": "role",
+          "type": "UserRole"
         },
         {
-          "name": "artistName",
-          "type": "string"
+          "name": "verified",
+          "type": "bool",
+          "default": "false"
         },
         {
           "name": "createdAt",
@@ -316,12 +339,146 @@
       ]
     },
     {
-      "name": "AdminActionMessage",
-      "description": "Message returned after approve/reject actions",
+      "name": "CreateUserInput",
+      "description": "Data required to create a new user",
       "fields": [
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "password",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "UpdateUserInput",
+      "description": "Fields that can be updated on a user",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "bio",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "role",
+          "type": "UserRole",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "name": "SuccessMessage",
+      "description": "Generic success response",
+      "fields": [
+        {
+          "name": "success",
+          "type": "bool"
+        },
         {
           "name": "message",
+          "type": "string",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "name": "ListQuery",
+      "description": "Common query parameters for list endpoints",
+      "fields": [
+        {
+          "name": "search",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "limit",
+          "type": "int",
+          "optional": true
+        },
+        {
+          "name": "offset",
+          "type": "int",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "name": "LoginInput",
+      "description": "Credentials for user login",
+      "fields": [
+        {
+          "name": "email",
           "type": "string"
+        },
+        {
+          "name": "password",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "RegisterInput",
+      "description": "Data for new account registration",
+      "fields": [
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "password",
+          "type": "string"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "name": "RegisterArtistInput",
+      "description": "Data for artist account registration",
+      "fields": [
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "password",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "AuthToken",
+      "description": "Token returned after successful authentication",
+      "fields": [
+        {
+          "name": "token",
+          "type": "string"
+        },
+        {
+          "name": "user",
+          "type": "User"
         }
       ]
     },
@@ -339,6 +496,10 @@
         },
         {
           "name": "artistName",
+          "type": "string"
+        },
+        {
+          "name": "categoryName",
           "type": "string"
         },
         {
@@ -465,8 +626,8 @@
           "type": "datetime"
         },
         {
-          "name": "categoryId",
-          "type": "uuid"
+          "name": "categoryName",
+          "type": "string"
         },
         {
           "name": "tags",
@@ -587,34 +748,20 @@
       ]
     },
     {
-      "name": "User",
-      "description": "A platform user",
+      "name": "PendingArtist",
+      "description": "Artist account waiting for admin approval",
       "fields": [
         {
           "name": "id",
           "type": "uuid"
         },
         {
+          "name": "username",
+          "type": "string"
+        },
+        {
           "name": "email",
           "type": "string"
-        },
-        {
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "name": "bio",
-          "type": "string",
-          "optional": true
-        },
-        {
-          "name": "role",
-          "type": "UserRole"
-        },
-        {
-          "name": "verified",
-          "type": "bool",
-          "default": "false"
         },
         {
           "name": "createdAt",
@@ -623,122 +770,74 @@
       ]
     },
     {
-      "name": "CreateUserInput",
-      "description": "Data required to create a new user",
+      "name": "PendingArtwork",
+      "description": "Artwork waiting for admin approval",
       "fields": [
         {
-          "name": "email",
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "title",
           "type": "string"
         },
         {
-          "name": "name",
+          "name": "description",
           "type": "string"
         },
         {
-          "name": "password",
+          "name": "initialPrice",
+          "type": "float"
+        },
+        {
+          "name": "artistName",
           "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "datetime"
         }
       ]
     },
     {
-      "name": "UpdateUserInput",
-      "description": "Fields that can be updated on a user",
+      "name": "AdminActionMessage",
+      "description": "Message returned after approve/reject actions",
       "fields": [
-        {
-          "name": "name",
-          "type": "string",
-          "optional": true
-        },
-        {
-          "name": "bio",
-          "type": "string",
-          "optional": true
-        },
-        {
-          "name": "role",
-          "type": "UserRole",
-          "optional": true
-        }
-      ]
-    },
-    {
-      "name": "LoginInput",
-      "description": "Credentials for user login",
-      "fields": [
-        {
-          "name": "email",
-          "type": "string"
-        },
-        {
-          "name": "password",
-          "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "RegisterInput",
-      "description": "Data for new account registration",
-      "fields": [
-        {
-          "name": "email",
-          "type": "string"
-        },
-        {
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "name": "password",
-          "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "AuthToken",
-      "description": "Token returned after successful authentication",
-      "fields": [
-        {
-          "name": "token",
-          "type": "string"
-        },
-        {
-          "name": "user",
-          "type": "User"
-        }
-      ]
-    },
-    {
-      "name": "SuccessMessage",
-      "description": "Generic success response",
-      "fields": [
-        {
-          "name": "success",
-          "type": "bool"
-        },
         {
           "name": "message",
-          "type": "string",
-          "optional": true
+          "type": "string"
         }
       ]
     },
     {
-      "name": "ListQuery",
-      "description": "Common query parameters for list endpoints",
+      "name": "Category",
+      "description": "Artwork category",
       "fields": [
         {
-          "name": "search",
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "CreateCategoryInput",
+      "description": "Payload to create category",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
           "type": "string",
-          "optional": true
-        },
-        {
-          "name": "limit",
-          "type": "int",
-          "optional": true
-        },
-        {
-          "name": "offset",
-          "type": "int",
           "optional": true
         }
       ]

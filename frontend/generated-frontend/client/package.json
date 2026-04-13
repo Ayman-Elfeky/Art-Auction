@@ -7,9 +7,10 @@
     ".": "./api.ts",
     "./types": "./types.ts",
     "./errors": "./errors.ts",
-    "./adminApi": "./adminApi.ts",
-    "./artworksApi": "./artworksApi.ts",
+    "./usersApi": "./usersApi.ts",
     "./authApi": "./authApi.ts",
-    "./usersApi": "./usersApi.ts"
+    "./artworksApi": "./artworksApi.ts",
+    "./adminApi": "./adminApi.ts",
+    "./categoriesApi": "./categoriesApi.ts"
   }
 }

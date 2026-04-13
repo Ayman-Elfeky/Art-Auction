@@ -8,7 +8,7 @@ public class CreateArtworkDto
     public decimal? BuyNowPrice { get; set; }
     public DateTime AuctionStartTime { get; set; }
     public DateTime AuctionEndTime { get; set; }
-    public Guid CategoryId { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
     public List<string> Tags { get; set; } = new();
     public string ImageUrl { get; set; } = string.Empty;
 }

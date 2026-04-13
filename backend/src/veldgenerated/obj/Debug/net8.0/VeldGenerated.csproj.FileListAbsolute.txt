@@ -5,6 +5,7 @@ D:\Projects\Internet-Application\new\backend\src\veldgenerated\obj\Debug\net8.0\
 D:\Projects\Internet-Application\new\backend\src\veldgenerated\obj\Debug\net8.0\VeldGenerated.AssemblyInfoInputs.cache
 D:\Projects\Internet-Application\new\backend\src\veldgenerated\obj\Debug\net8.0\VeldGenerated.AssemblyInfo.cs
 D:\Projects\Internet-Application\new\backend\src\veldgenerated\obj\Debug\net8.0\VeldGenerated.csproj.CoreCompileInputs.cache
+D:\Projects\Internet-Application\new\backend\src\veldgenerated\obj\Debug\net8.0\VeldGenerated.sourcelink.json
 D:\Projects\Internet-Application\new\backend\src\veldgenerated\obj\Debug\net8.0\VeldGenerated.dll
 D:\Projects\Internet-Application\new\backend\src\veldgenerated\obj\Debug\net8.0\refint\VeldGenerated.dll
 D:\Projects\Internet-Application\new\backend\src\veldgenerated\obj\Debug\net8.0\VeldGenerated.pdb

@@ -1,0 +1,14 @@
+// Shared types used across multiple modules.
+
+model SuccessMessage {
+  description: "Generic success response"
+  success: bool
+  message?: string
+}
+
+model ListQuery {
+  description: "Common query parameters for list endpoints"
+  search?: string
+  limit?:  int
+  offset?: int
+}

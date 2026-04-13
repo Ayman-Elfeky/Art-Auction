@@ -1,0 +1,24 @@
+{
+  "name": "@veld/hooks",
+  "version": "0.0.0",
+  "private": true,
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./adminHooks": "./adminHooks.ts",
+    "./artworksHooks": "./artworksHooks.ts",
+    "./authHooks": "./authHooks.ts",
+    "./usersHooks": "./usersHooks.ts",
+    "./core": "./core/index.ts",
+    "./core/adminHooks": "./core/adminHooks.ts",
+    "./core/artworksHooks": "./core/artworksHooks.ts",
+    "./core/authHooks": "./core/authHooks.ts",
+    "./core/usersHooks": "./core/usersHooks.ts"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query": { "optional": true }
+  }
+}

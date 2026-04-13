@@ -1,0 +1,13 @@
+{
+    "version": 1,
+    "isRoot": true,
+    "tools": {
+      "maayn.veld": {
+        "version": "0.3.21",
+        "commands": [
+          "veld"
+        ],
+        "rollForward": false
+      }
+    }
+  }

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://veld.dev/schemas/veld.config.schema.json",
+  "input": "app.veld",
+  "backendConfig": {
+    "target": "csharp",
+    "framework": "aspnet",
+    "out": "../src/veldgenerated",
+    "dir": "../src/api"
+  },
+  "frontendConfig": {
+    "target": "react",
+    "out": "../../frontend/generated-frontend"
+  },
+  "baseUrl": "/api",
+  "aliases": {}
+}

@@ -8,11 +8,13 @@
     "./adminHooks": "./adminHooks.ts",
     "./artworksHooks": "./artworksHooks.ts",
     "./authHooks": "./authHooks.ts",
+    "./bidHooks": "./bidHooks.ts",
     "./usersHooks": "./usersHooks.ts",
     "./core": "./core/index.ts",
     "./core/adminHooks": "./core/adminHooks.ts",
     "./core/artworksHooks": "./core/artworksHooks.ts",
     "./core/authHooks": "./core/authHooks.ts",
+    "./core/bidHooks": "./core/bidHooks.ts",
     "./core/usersHooks": "./core/usersHooks.ts"
   },
   "peerDependencies": {

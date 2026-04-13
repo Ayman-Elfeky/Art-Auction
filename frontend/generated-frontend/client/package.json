@@ -10,6 +10,7 @@
     "./adminApi": "./adminApi.ts",
     "./artworksApi": "./artworksApi.ts",
     "./authApi": "./authApi.ts",
+    "./bidApi": "./bidApi.ts",
     "./usersApi": "./usersApi.ts"
   }
 }

@@ -1,14 +1,16 @@
 {
   "fileHashes": {
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\app.veld": "2d9c9bd3d9e901d5313d6c6fcdfebd2246cffac845cacd1c55442002fafe4ac6",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\admin.model.veld": "6b6a0ac8942291e3aa55a15dc445075ca936607126208a5ed889cba266b4f0d3",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\artwork.model.veld": "aa3c0fb656ae915391bb36d5bf1785a02dfb80dd923de0957b7898496c056305",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\auth.model.veld": "03e5d74e28ee245ce03e0e9344afc87082ac03f08c8ecb9ac0e5d4a90150ba48",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\common.model.veld": "45258486359905b41b1fed70ac67d94fff20a53694a8f4f73672dbc0d0f044ce",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\models\\user.model.veld": "828db2ef3c21c2b7bf07ff94d5fad5c2e9e0ddc9aca64a0a2c0dbe67dbe078c4",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\admin.veld": "8fe6fbcb3ca1fd89c5ab6b14a41c467b9904d56e4490eb01825ae5f90489440e",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\artwork.veld": "e6d5e1be2ae6b43be7560588247c462c9d733682fb97852f4776732e62d658df",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\auth.veld": "6c5520aa221e5b0c012bfe62c10bb891cd6f0c6c4fd39b558df75cfe572598ef",
-    "D:\\Projects\\Internet-Application\\new\\backend\\veld\\modules\\user.veld": "54964c1faa6e3f95d3a206d1306fd88dd20e889b40f72467c69d5f98ac540914"
+    "C:\\Games\\Art-Auction\\backend\\veld\\app.veld": "9b526005dca7684f11e9dc26d266b4806cb32feab7669f6c581998c8a165d5b0",
+    "C:\\Games\\Art-Auction\\backend\\veld\\models\\admin.model.veld": "6b6a0ac8942291e3aa55a15dc445075ca936607126208a5ed889cba266b4f0d3",
+    "C:\\Games\\Art-Auction\\backend\\veld\\models\\artwork.model.veld": "aa3c0fb656ae915391bb36d5bf1785a02dfb80dd923de0957b7898496c056305",
+    "C:\\Games\\Art-Auction\\backend\\veld\\models\\auth.model.veld": "03e5d74e28ee245ce03e0e9344afc87082ac03f08c8ecb9ac0e5d4a90150ba48",
+    "C:\\Games\\Art-Auction\\backend\\veld\\models\\bid.model.veld": "97e60facc05ba1ca5bb40e0326923d2461285f16f92d10edf3215f741209c321",
+    "C:\\Games\\Art-Auction\\backend\\veld\\models\\common.model.veld": "a7d9627ac60b494c7331bd0dc4e2301b8589f1aa29c182f9701802253119b1b5",
+    "C:\\Games\\Art-Auction\\backend\\veld\\models\\user.model.veld": "828db2ef3c21c2b7bf07ff94d5fad5c2e9e0ddc9aca64a0a2c0dbe67dbe078c4",
+    "C:\\Games\\Art-Auction\\backend\\veld\\modules\\admin.veld": "8fe6fbcb3ca1fd89c5ab6b14a41c467b9904d56e4490eb01825ae5f90489440e",
+    "C:\\Games\\Art-Auction\\backend\\veld\\modules\\artwork.veld": "e6d5e1be2ae6b43be7560588247c462c9d733682fb97852f4776732e62d658df",
+    "C:\\Games\\Art-Auction\\backend\\veld\\modules\\auth.veld": "6c5520aa221e5b0c012bfe62c10bb891cd6f0c6c4fd39b558df75cfe572598ef",
+    "C:\\Games\\Art-Auction\\backend\\veld\\modules\\bid.veld": "949bf1fe504cc92e50a72865b28893c6158a247e65839cce772fe4cba1dd052e",
+    "C:\\Games\\Art-Auction\\backend\\veld\\modules\\user.veld": "54964c1faa6e3f95d3a206d1306fd88dd20e889b40f72467c69d5f98ac540914"
   }
 }

@@ -3,4 +3,5 @@
 export { adminHooks } from './adminHooks';
 export { artworksHooks } from './artworksHooks';
 export { authHooks } from './authHooks';
+export { bidHooks } from './bidHooks';
 export { usersHooks } from './usersHooks';

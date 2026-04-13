@@ -24,3 +24,4 @@
 
 import @modules/users
 import @modules/auth
+import @modules/bid

@@ -6,12 +6,14 @@ export * from './errors';
 export { AdminClient, adminApi } from './adminApi';
 export { ArtworksClient, artworksApi } from './artworksApi';
 export { AuthClient, authApi } from './authApi';
+export { bidClient, bidApi } from './bidApi';
 export { UsersClient, usersApi } from './usersApi';
 
 // Imports for VeldApiClient composition.
 import { AdminClient } from './adminApi';
 import { ArtworksClient } from './artworksApi';
 import { AuthClient } from './authApi';
+import { bidClient } from './bidApi';
 import { UsersClient } from './usersApi';
 
 
@@ -19,12 +21,14 @@ export class VeldApiClient {
   public readonly admin: AdminClient;
   public readonly artworks: ArtworksClient;
   public readonly auth: AuthClient;
+  public readonly bid: bidClient;
   public readonly users: UsersClient;
 
   constructor(config?: VeldClientConfig | string) {
     this.admin = new AdminClient(config);
     this.artworks = new ArtworksClient(config);
     this.auth = new AuthClient(config);
+    this.bid = new bidClient(config);
     this.users = new UsersClient(config);
   }
 }

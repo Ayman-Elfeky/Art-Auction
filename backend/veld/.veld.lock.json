@@ -208,6 +208,29 @@
       ]
     },
     {
+      "name": "bid",
+      "prefix": "/api/bids",
+      "actions": [
+        {
+          "name": "CreateBid",
+          "method": "POST",
+          "path": "/",
+          "input": "Bid",
+          "output": "string",
+          "middleware": []
+        },
+        {
+          "name": "GetBids",
+          "method": "GET",
+          "path": "/artworks/:id",
+          "input": "",
+          "output": "Bid",
+          "outputArray": true,
+          "middleware": []
+        }
+      ]
+    },
+    {
       "name": "Users",
       "description": "User management",
       "prefix": "/api/users",
@@ -740,6 +763,35 @@
           "name": "offset",
           "type": "int",
           "optional": true
+        }
+      ]
+    },
+    {
+      "name": "Bid",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "issuerId",
+          "type": "string"
+        },
+        {
+          "name": "artId",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "decimal"
+        },
+        {
+          "name": "highestBidder",
+          "type": "bool"
+        },
+        {
+          "name": "placed",
+          "type": "datetime"
         }
       ]
     }

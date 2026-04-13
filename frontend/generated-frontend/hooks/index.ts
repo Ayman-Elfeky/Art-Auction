@@ -2,10 +2,12 @@
 export { adminHooks } from './adminHooks';
 export { artworksHooks } from './artworksHooks';
 export { authHooks } from './authHooks';
+export { bidHooks } from './bidHooks';
 export { usersHooks } from './usersHooks';
 export * from './adminHooks';
 export * from './artworksHooks';
 export * from './authHooks';
+export * from './bidHooks';
 export * from './usersHooks';
 
 // Zero-dependency core hooks (no TanStack Query required):

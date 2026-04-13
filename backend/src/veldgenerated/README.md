@@ -8,6 +8,7 @@
 - **Admin** — Admin review and approval endpoints (6 actions)
 - **Artworks** — Artwork browsing and management (7 actions)
 - **Auth** — Authentication and session management (4 actions)
+- **bid** (2 actions)
 - **Users** — User management (5 actions)
 
 ## Regenerate

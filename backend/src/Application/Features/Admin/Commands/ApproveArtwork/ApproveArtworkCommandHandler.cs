@@ -27,6 +27,7 @@ namespace ArtAuction.Application.Features.Admin.Commands.ApproveArtwork
                 .FirstOrDefaultAsync(a => a.Id == request.ArtworkId, cancellationToken);
 
             if (artwork == null) return false;
+            if (artwork.Status != ArtworkStatus.Pending) return false;
 
             artwork.Status = ArtworkStatus.Approved;
             artwork.UpdatedAt = DateTime.UtcNow;

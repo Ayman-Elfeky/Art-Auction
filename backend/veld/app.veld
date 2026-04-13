@@ -22,6 +22,8 @@
 // Run "veld validate" at any time to check your contract for errors.
 // ─────────────────────────────────────────────────────────────────────
 
-import @modules/users
+import @modules/user
 import @modules/auth
-import @modules/bid
+import @modules/artwork
+import @modules/admin
+import @modules/category

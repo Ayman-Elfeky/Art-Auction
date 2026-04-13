@@ -1,0 +1,24 @@
+// Categories module — create/list categories.
+
+import @models/category.model
+
+module Categories {
+  description: "Category management"
+  prefix:      /api/categories
+
+  action ListCategories {
+    description: "List all categories"
+    method:      GET
+    path:        /
+    output:      Category[]
+  }
+
+  action CreateCategory {
+    description: "Create category by name"
+    method:      POST
+    path:        /
+    input:       CreateCategoryInput
+    output:      Category
+    middleware:  RequireAdmin
+  }
+}

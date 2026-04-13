@@ -3,33 +3,33 @@ export type { VeldClientConfig } from './_internal';
 export { VeldApiError, VeldWebSocket, isApiError, isErrorCode } from './_internal';
 export * from './types';
 export * from './errors';
-export { AdminClient, adminApi } from './adminApi';
-export { ArtworksClient, artworksApi } from './artworksApi';
-export { AuthClient, authApi } from './authApi';
-export { bidClient, bidApi } from './bidApi';
 export { UsersClient, usersApi } from './usersApi';
+export { AuthClient, authApi } from './authApi';
+export { ArtworksClient, artworksApi } from './artworksApi';
+export { AdminClient, adminApi } from './adminApi';
+export { CategoriesClient, categoriesApi } from './categoriesApi';
 
 // Imports for VeldApiClient composition.
-import { AdminClient } from './adminApi';
-import { ArtworksClient } from './artworksApi';
-import { AuthClient } from './authApi';
-import { bidClient } from './bidApi';
 import { UsersClient } from './usersApi';
+import { AuthClient } from './authApi';
+import { ArtworksClient } from './artworksApi';
+import { AdminClient } from './adminApi';
+import { CategoriesClient } from './categoriesApi';
 
 
 export class VeldApiClient {
-  public readonly admin: AdminClient;
-  public readonly artworks: ArtworksClient;
-  public readonly auth: AuthClient;
-  public readonly bid: bidClient;
   public readonly users: UsersClient;
+  public readonly auth: AuthClient;
+  public readonly artworks: ArtworksClient;
+  public readonly admin: AdminClient;
+  public readonly categories: CategoriesClient;
 
   constructor(config?: VeldClientConfig | string) {
-    this.admin = new AdminClient(config);
-    this.artworks = new ArtworksClient(config);
-    this.auth = new AuthClient(config);
-    this.bid = new bidClient(config);
     this.users = new UsersClient(config);
+    this.auth = new AuthClient(config);
+    this.artworks = new ArtworksClient(config);
+    this.admin = new AdminClient(config);
+    this.categories = new CategoriesClient(config);
   }
 }
 

@@ -21,6 +21,7 @@ public class ExtendAuctionTimeCommandHandler : IRequestHandler<ExtendAuctionTime
     {
         var artwork = await _context.Artworks
             .Include(a => a.Artist)
+            .Include(a => a.Category)
             .FirstOrDefaultAsync(a => a.Id == request.ArtworkId, cancellationToken);
 
         if (artwork == null)
@@ -56,6 +57,7 @@ public class ExtendAuctionTimeCommandHandler : IRequestHandler<ExtendAuctionTime
             Id = artwork.Id,
             Title = artwork.Title,
             ArtistName = artwork.Artist.Username,
+            CategoryName = artwork.Category.Name,
             InitialPrice = artwork.InitialPrice,
             CurrentBid = artwork.CurrentBid,
             AuctionEndTime = artwork.AuctionEndTime,

@@ -40,11 +40,22 @@ public class UpdateArtworkCommandHandler : IRequestHandler<UpdateArtworkCommand,
             return Result<ArtworkDto>.Failure("Cannot update active auction");
         }
 
-        // Verify category exists
-        var category = await _context.Categories.FindAsync(new object[] { request.Dto.CategoryId }, cancellationToken);
-        if (category == null)
+        // Resolve (or create) category by name
+        var normalizedCategoryName = request.Dto.CategoryName.Trim();
+        var normalizedLookup = normalizedCategoryName.ToLowerInvariant();
+        var category = await _context.Categories
+            .FirstOrDefaultAsync(c => c.Name.ToLower() == normalizedLookup, cancellationToken);
+
+        if (category is null)
         {
-            return Result<ArtworkDto>.Failure("Category not found");
+            category = new Domain.Entities.Category
+            {
+                Id = Guid.NewGuid(),
+                Name = normalizedCategoryName,
+                Description = string.Empty
+            };
+
+            _context.Categories.Add(category);
         }
 
         // Update fields
@@ -54,7 +65,7 @@ public class UpdateArtworkCommandHandler : IRequestHandler<UpdateArtworkCommand,
         artwork.BuyNowPrice = request.Dto.BuyNowPrice;
         artwork.AuctionStartTime = request.Dto.AuctionStartTime;
         artwork.AuctionEndTime = request.Dto.AuctionEndTime;
-        artwork.CategoryId = request.Dto.CategoryId;
+        artwork.CategoryId = category.Id;
         artwork.ImageUrl = request.Dto.ImageUrl;
         artwork.UpdatedAt = DateTime.UtcNow;
 
@@ -75,6 +86,7 @@ public class UpdateArtworkCommandHandler : IRequestHandler<UpdateArtworkCommand,
             Id = artwork.Id,
             Title = artwork.Title,
             ArtistName = artwork.Artist.Username,
+            CategoryName = category.Name,
             InitialPrice = artwork.InitialPrice,
             CurrentBid = artwork.CurrentBid,
             AuctionEndTime = artwork.AuctionEndTime,

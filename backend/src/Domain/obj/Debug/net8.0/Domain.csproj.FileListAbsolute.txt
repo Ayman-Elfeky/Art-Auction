@@ -16,6 +16,7 @@ D:\Projects\Internet-Application\new\backend\src\Domain\obj\Debug\net8.0\Domain.
 D:\Projects\Internet-Application\new\backend\src\Domain\obj\Debug\net8.0\Domain.AssemblyInfoInputs.cache
 D:\Projects\Internet-Application\new\backend\src\Domain\obj\Debug\net8.0\Domain.AssemblyInfo.cs
 D:\Projects\Internet-Application\new\backend\src\Domain\obj\Debug\net8.0\Domain.csproj.CoreCompileInputs.cache
+D:\Projects\Internet-Application\new\backend\src\Domain\obj\Debug\net8.0\Domain.sourcelink.json
 D:\Projects\Internet-Application\new\backend\src\Domain\obj\Debug\net8.0\Domain.dll
 D:\Projects\Internet-Application\new\backend\src\Domain\obj\Debug\net8.0\refint\Domain.dll
 D:\Projects\Internet-Application\new\backend\src\Domain\obj\Debug\net8.0\Domain.pdb

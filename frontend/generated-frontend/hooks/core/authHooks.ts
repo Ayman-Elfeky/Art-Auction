@@ -2,7 +2,7 @@
 // Zero-dependency hooks — no TanStack Query required.
 import { useState, useEffect, useCallback } from 'react';
 import { authApi } from '../../client/authApi';
-import type { LoginInput, AuthToken, RegisterInput, User, SuccessMessage, UserRole } from '../../types';
+import type { LoginInput, AuthToken, RegisterInput, RegisterArtistInput, User, SuccessMessage, UserRole } from '../../types';
 
 /** Log in with credentials */
 export function useLogin() {
@@ -32,6 +32,24 @@ export function useRegister() {
     setLoading(true);
     setError(null);
     return authApi.register(vars.input)
+      .then((result) => { setData(result); return result; })
+      .catch((err) => { setError(err); throw err; })
+      .finally(() => { setLoading(false); });
+  }, []);
+
+  return { mutate, data, loading, error };
+}
+
+/** Register a new artist account (pending approval) */
+export function useRegisterArtist() {
+  const [data, setData] = useState<AuthToken | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const mutate = useCallback((vars: { input: RegisterArtistInput }) => {
+    setLoading(true);
+    setError(null);
+    return authApi.registerArtist(vars.input)
       .then((result) => { setData(result); return result; })
       .catch((err) => { setError(err); throw err; })
       .finally(() => { setLoading(false); });
@@ -81,6 +99,7 @@ export function useLogout() {
 export const authHooks = {
   useLogin,
   useRegister,
+  useRegisterArtist,
   useGetMe,
   useLogout,
 };

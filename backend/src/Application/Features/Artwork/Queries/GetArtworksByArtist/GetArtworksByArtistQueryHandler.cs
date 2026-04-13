@@ -33,6 +33,7 @@ public class GetArtworksByArtistQueryHandler : IRequestHandler<GetArtworksByArti
                 Id = a.Id,
                 Title = a.Title,
                 ArtistName = a.Artist.Username,
+                CategoryName = a.Category.Name,
                 InitialPrice = a.InitialPrice,
                 CurrentBid = a.CurrentBid,
                 AuctionEndTime = a.AuctionEndTime,

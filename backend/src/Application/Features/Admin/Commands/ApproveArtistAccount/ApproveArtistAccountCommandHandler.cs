@@ -27,6 +27,8 @@ namespace ArtAuction.Application.Features.Admin.Commands.ApproveArtistAccount
                 .FirstOrDefaultAsync(u => u.Id == request.ArtistId && u.Role == UserRole.Artist, cancellationToken);
 
             if (artist == null) return false;
+            if (!artist.IsActive) return false;
+            if (artist.IsApproved) return false;
 
             artist.IsApproved = true;
             artist.UpdatedAt = DateTime.UtcNow;

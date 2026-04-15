@@ -6,15 +6,16 @@ namespace VeldGenerated.Models;
 /// <summary>Token returned after successful authentication</summary>
 public class AuthToken
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("token")]
-    public string Token { get; set; }
+    public string? Token { get; set; }
 
     [JsonPropertyName("user")]
     public User User { get; set; }
 
     public AuthToken() { }
 
-    public AuthToken(string token, User user)
+    public AuthToken(string? token, User user)
     {
         Token = token;
         User = user;

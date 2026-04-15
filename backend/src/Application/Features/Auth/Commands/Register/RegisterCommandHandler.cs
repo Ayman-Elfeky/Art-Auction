@@ -11,28 +11,33 @@ namespace ArtAuction.Application.Features.Auth.Commands.Register;
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<AuthResponseDto>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IJwtService _jwtService;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public RegisterCommandHandler(IApplicationDbContext context, IJwtService jwtService)
+    public RegisterCommandHandler(
+        IApplicationDbContext context,
+        IPasswordHasher passwordHasher)
     {
         _context = context;
-        _jwtService = jwtService;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<Result<AuthResponseDto>> Handle(
         RegisterCommand request,
         CancellationToken cancellationToken)
     {
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var normalizedUsername = request.Username.Trim();
+
         // Check if email already exists
         var emailExists = await _context.Users
-            .AnyAsync(u => u.Email == request.Email, cancellationToken);
+            .AnyAsync(u => u.Email.ToLower() == normalizedEmail, cancellationToken);
 
         if (emailExists)
             return Result<AuthResponseDto>.Failure("Email is already registered.");
 
         // Check if username already exists
         var usernameExists = await _context.Users
-            .AnyAsync(u => u.Username == request.Username, cancellationToken);
+            .AnyAsync(u => u.Username.ToLower() == normalizedUsername.ToLower(), cancellationToken);
 
         if (usernameExists)
             return Result<AuthResponseDto>.Failure("Username is already taken.");
@@ -41,9 +46,9 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Au
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = request.Username,
-            Email = request.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Username = normalizedUsername,
+            Email = normalizedEmail,
+            PasswordHash = _passwordHasher.HashPassword(request.Password),
             Role = request.Role,
             // Buyers are auto-approved, Artists need admin approval
             IsApproved = request.Role == UserRole.Buyer,
@@ -55,15 +60,15 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Au
         _context.Users.Add(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        var token = _jwtService.GenerateToken(user);
-
         return Result<AuthResponseDto>.Success(new AuthResponseDto
         {
-            Token = token,
+            UserId = user.Id,
+            Token = null,
             Username = user.Username,
             Email = user.Email,
             Role = user.Role.ToString(),
-            IsApproved = user.IsApproved
+            IsApproved = user.IsApproved,
+            CreatedAt = user.CreatedAt
         });
     }
 }

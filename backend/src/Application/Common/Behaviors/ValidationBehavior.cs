@@ -1,0 +1,44 @@
+using FluentValidation;
+using MediatR;
+
+namespace ArtAuction.Application.Common.Behaviors;
+
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : notnull
+{
+    private readonly IEnumerable<IValidator<TRequest>> _validators;
+
+    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+    {
+        _validators = validators;
+    }
+
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
+    {
+        if (!_validators.Any())
+        {
+            return await next();
+        }
+
+        var context = new ValidationContext<TRequest>(request);
+        var validationResults = await Task.WhenAll(
+            _validators.Select(validator => validator.ValidateAsync(context, cancellationToken)));
+
+        var failures = validationResults
+            .SelectMany(result => result.Errors)
+            .Where(error => error is not null)
+            .Select(error => error.ErrorMessage)
+            .Distinct()
+            .ToArray();
+
+        if (failures.Length != 0)
+        {
+            throw new ArtAuction.Application.Common.Exceptions.ValidationException(string.Join("; ", failures));
+        }
+
+        return await next();
+    }
+}

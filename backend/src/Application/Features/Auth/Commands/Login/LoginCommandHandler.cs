@@ -10,26 +10,33 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResp
 {
     private readonly IApplicationDbContext _context;
     private readonly IJwtService _jwtService;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public LoginCommandHandler(IApplicationDbContext context, IJwtService jwtService)
+    public LoginCommandHandler(
+        IApplicationDbContext context,
+        IJwtService jwtService,
+        IPasswordHasher passwordHasher)
     {
         _context = context;
         _jwtService = jwtService;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<Result<AuthResponseDto>> Handle(
         LoginCommand request,
         CancellationToken cancellationToken)
     {
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+
         // Find user by email
         var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail, cancellationToken);
 
         if (user == null)
             return Result<AuthResponseDto>.Failure("Invalid email or password.");
 
         // Verify password
-        if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        if (!_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
             return Result<AuthResponseDto>.Failure("Invalid email or password.");
 
         // Check if account is active
@@ -40,11 +47,13 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResp
 
         return Result<AuthResponseDto>.Success(new AuthResponseDto
         {
+            UserId = user.Id,
             Token = token,
             Username = user.Username,
             Email = user.Email,
             Role = user.Role.ToString(),
-            IsApproved = user.IsApproved
+            IsApproved = user.IsApproved,
+            CreatedAt = user.CreatedAt
         });
     }
 }

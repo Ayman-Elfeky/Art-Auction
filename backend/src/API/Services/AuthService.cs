@@ -1,10 +1,12 @@
+using ArtAuction.Application.Common.Interfaces;
+using ArtAuction.Application.Common.Models;
 using ArtAuction.Application.Features.Auth.Commands.Login;
 using ArtAuction.Application.Features.Auth.Commands.Register;
-using ArtAuction.Application.Common.Interfaces;
+using ArtAuction.Application.Features.Auth.DTOs;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using VeldGenerated.Errors;
 using VeldGenerated.Models;
 using VeldGenerated.Services;
 
@@ -25,56 +27,72 @@ public class AuthService : IAuthService
 
     public async Task<AuthToken> Login(LoginInput input)
     {
-        var result = await _mediator.Send(new LoginCommand
+        try
         {
-            Email = input.Email,
-            Password = input.Password
-        });
+            var result = await _mediator.Send(new LoginCommand
+            {
+                Email = input.Email,
+                Password = input.Password
+            });
 
-        if (!result.Succeeded || result.Data is null)
-        {
-            throw new InvalidOperationException(string.Join("; ", result.Errors));
+            return ToAuthToken(result, "login");
         }
-
-        var user = await _dbContext.Users.FirstAsync(u => u.Email == input.Email);
-        return new AuthToken(result.Data.Token, MapUser(user));
+        catch (ArtAuction.Application.Common.Exceptions.ValidationException ex)
+        {
+            throw new ValidationException(ex.Message, "AUTH_VALIDATION_FAILED");
+        }
     }
 
     public async Task<AuthToken> Register(RegisterInput input)
     {
-        var requestedRole = MapPublicRegisterRole(input.Role);
-        return await RegisterWithRole(input.Name, input.Email, input.Password, requestedRole);
+        try
+        {
+            var requestedRole = MapPublicRegisterRole(input.Role);
+            return await RegisterWithRole(input.Name, input.Email, input.Password, requestedRole);
+        }
+        catch (ArtAuction.Application.Common.Exceptions.ValidationException ex)
+        {
+            throw new ValidationException(ex.Message, "AUTH_VALIDATION_FAILED");
+        }
     }
 
     public async Task<AuthToken> RegisterArtist(RegisterArtistInput input)
     {
-        return await RegisterWithRole(
-            input.Name,
-            input.Email,
-            input.Password,
-            ArtAuction.Domain.Enums.UserRole.Artist);
+        try
+        {
+            return await RegisterWithRole(
+                input.Name,
+                input.Email,
+                input.Password,
+                ArtAuction.Domain.Enums.UserRole.Artist);
+        }
+        catch (ArtAuction.Application.Common.Exceptions.ValidationException ex)
+        {
+            throw new ValidationException(ex.Message, "AUTH_VALIDATION_FAILED");
+        }
     }
 
     public async Task<User> GetMe()
     {
         var httpContext = _httpContextAccessor.HttpContext
-            ?? throw new InvalidOperationException("No HTTP context found.");
-        var authHeader = httpContext.Request.Headers.Authorization.ToString();
-        if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            ?? throw new UnauthorizedException("No HTTP context found.", "AUTH_CONTEXT_MISSING");
+
+        if (httpContext.User?.Identity?.IsAuthenticated != true)
         {
-            throw new InvalidOperationException("Missing bearer token.");
+            throw new UnauthorizedException("Missing or invalid bearer token.", "AUTH_REQUIRED");
         }
 
-        var token = authHeader["Bearer ".Length..].Trim();
-        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-        var sub = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub || c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var sub = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? httpContext.User.FindFirst("sub")?.Value;
+
         if (!Guid.TryParse(sub, out var userId))
         {
-            throw new InvalidOperationException("Invalid token subject.");
+            throw new UnauthorizedException("Invalid token subject.", "AUTH_INVALID_SUBJECT");
         }
 
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId)
-            ?? throw new InvalidOperationException("User not found.");
+            ?? throw new UnauthorizedException("User not found.", "AUTH_USER_NOT_FOUND");
+
         return MapUser(user);
     }
 
@@ -95,6 +113,18 @@ public class AuthService : IAuthService
             domainUser.CreatedAt);
     }
 
+    private static User MapUser(AuthResponseDto authResponse)
+    {
+        return new User(
+            authResponse.UserId,
+            authResponse.Email,
+            authResponse.Username,
+            null,
+            MapRole(authResponse.Role),
+            authResponse.IsApproved,
+            authResponse.CreatedAt);
+    }
+
     private static VeldGenerated.Models.UserRole MapRole(ArtAuction.Domain.Enums.UserRole role)
     {
         return role switch
@@ -104,6 +134,13 @@ public class AuthService : IAuthService
             ArtAuction.Domain.Enums.UserRole.Artist => VeldGenerated.Models.UserRole.Artist,
             _ => VeldGenerated.Models.UserRole.User
         };
+    }
+
+    private static VeldGenerated.Models.UserRole MapRole(string role)
+    {
+        return Enum.TryParse<ArtAuction.Domain.Enums.UserRole>(role, true, out var parsedRole)
+            ? MapRole(parsedRole)
+            : VeldGenerated.Models.UserRole.User;
     }
 
     private async Task<AuthToken> RegisterWithRole(
@@ -120,13 +157,7 @@ public class AuthService : IAuthService
             Role = role
         });
 
-        if (!result.Succeeded || result.Data is null)
-        {
-            throw new InvalidOperationException(string.Join("; ", result.Errors));
-        }
-
-        var user = await _dbContext.Users.FirstAsync(u => u.Email == email);
-        return new AuthToken(result.Data.Token, MapUser(user));
+        return ToAuthResponse(result, "register", includeToken: false);
     }
 
     private static ArtAuction.Domain.Enums.UserRole MapPublicRegisterRole(string? role)
@@ -135,7 +166,41 @@ public class AuthService : IAuthService
         return normalized switch
         {
             "" or "buyer" or "user" => ArtAuction.Domain.Enums.UserRole.Buyer,
-            _ => throw new InvalidOperationException("Not a valid payload")
+            _ => throw new ValidationException("Public registration only supports buyer accounts.", "AUTH_INVALID_ROLE")
+        };
+    }
+
+    private static AuthToken ToAuthToken(Result<AuthResponseDto> result, string operation)
+    {
+        return ToAuthResponse(result, operation, includeToken: true);
+    }
+
+    private static AuthToken ToAuthResponse(
+        Result<AuthResponseDto> result,
+        string operation,
+        bool includeToken)
+    {
+        if (!result.Succeeded || result.Data is null)
+        {
+            throw MapAuthFailure(result.Errors, operation);
+        }
+
+        return new AuthToken(includeToken ? result.Data.Token : null, MapUser(result.Data));
+    }
+
+    private static ApiException MapAuthFailure(IEnumerable<string> errors, string operation)
+    {
+        var messages = errors.Where(error => !string.IsNullOrWhiteSpace(error)).ToArray();
+        var message = messages.FirstOrDefault() ?? "Authentication failed.";
+
+        return message switch
+        {
+            "Invalid email or password." => new UnauthorizedException(message, "AUTH_INVALID_CREDENTIALS"),
+            "Your account has been deactivated." => new ForbiddenException(message, "AUTH_ACCOUNT_DEACTIVATED"),
+            "Email is already registered." => new ConflictException(message, "AUTH_EMAIL_EXISTS"),
+            "Username is already taken." => new ConflictException(message, "AUTH_USERNAME_EXISTS"),
+            _ when operation == "register" => new BadRequestException(message, "AUTH_REGISTER_FAILED"),
+            _ => new UnauthorizedException(message, "AUTH_FAILED")
         };
     }
 }

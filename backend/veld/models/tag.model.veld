@@ -1,0 +1,14 @@
+// Tag API Contract
+
+model Tag{
+    description: "Artwork Tag"
+    id: uuid
+    name: string
+    description: string
+}
+
+model CreateTagInput {
+  description: "Payload to create Tag"
+  name:        string
+  description?: string
+}

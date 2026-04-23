@@ -46,6 +46,9 @@ yarn-error.log*
 **/.parcel-cache/
 **/coverage/
 
-# Cursor / local agent state
+# Local agent / IDE session folders (keep out of git)
 .cursor/
 *.cursor-tmp
+
+# Local API uploads (development)
+backend/src/API/wwwroot/uploads/

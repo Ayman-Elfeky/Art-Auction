@@ -20,4 +20,5 @@ public class User
     public ICollection<Bid> Bids {get; set;} = new List<Bid>();
     public ICollection<Watchlist> Watchlist { get; set; } = new List<Watchlist>();
     public ICollection<Notification> Notifications {get; set;} = new List<Notification>();
+    public ICollection<UserRoleAssignment> RoleAssignments { get; set; } = new List<UserRoleAssignment>();
 }

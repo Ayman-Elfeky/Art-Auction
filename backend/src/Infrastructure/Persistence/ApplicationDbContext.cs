@@ -18,6 +18,10 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Bid> Bids => Set<Bid>();
     public DbSet<Watchlist> Watchlists => Set<Watchlist>();
     public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<Permission> Permissions => Set<Permission>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<UserRoleAssignment> UserRoleAssignments => Set<UserRoleAssignment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

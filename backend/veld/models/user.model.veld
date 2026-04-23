@@ -1,0 +1,33 @@
+// User domain models and enums.
+
+enum UserRole {
+  admin
+  user
+  artist
+  guest
+}
+
+model User {
+  description: "A platform user"
+  id:        uuid
+  email:     string
+  name:      string
+  bio?:      string
+  role:      UserRole   
+  verified:  bool       @default(false)
+  createdAt: datetime
+}
+
+model CreateUserInput {
+  description: "Data required to create a new user"
+  email:    string
+  name:     string
+  password: string
+}
+
+model UpdateUserInput {
+  description: "Fields that can be updated on a user"
+  name?: string
+  bio?:  string
+  role?: UserRole
+}

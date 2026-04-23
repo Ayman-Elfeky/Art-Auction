@@ -1,0 +1,54 @@
+// Auth module — authentication and session management.
+// Middleware names are labels — you provide the actual functions at runtime.
+
+import @models/user.model
+import @models/auth.model
+import @models/common.model
+
+module Auth {
+  description: "Authentication and session management"
+  prefix:      /api/auth
+
+  action Login {
+    description: "Log in with credentials"
+    method:      POST
+    path:        /login
+    input:       LoginInput
+    output:      AuthToken
+    middleware:   RateLimit
+  }
+
+  action Register {
+    description: "Register a new account"
+    method:      POST
+    path:        /register
+    input:       RegisterInput
+    output:      AuthToken
+    middleware:   RateLimit
+  }
+
+  action RegisterArtist {
+    description: "Register a new artist account (pending approval)"
+    method:      POST
+    path:        /register/artist
+    input:       RegisterArtistInput
+    output:      AuthToken
+    middleware:   RateLimit
+  }
+
+  action GetMe {
+    description: "Get the currently authenticated user"
+    method:      GET
+    path:        /me
+    output:      User
+    middleware:   RequireAuth
+  }
+
+  action Logout {
+    description: "Log out and invalidate session"
+    method:      POST
+    path:        /logout
+    output:      SuccessMessage
+    middleware:   RequireAuth
+  }
+}

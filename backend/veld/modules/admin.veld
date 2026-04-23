@@ -1,0 +1,56 @@
+// Admin module — approval workflows for artists and artworks.
+
+import @models/admin.model
+
+module Admin {
+  description: "Admin review and approval endpoints"
+  prefix:      /api/admin
+
+  action GetPendingArtists {
+    description: "Get all artists waiting for approval"
+    method:      GET
+    path:        /artists/pending
+    output:      PendingArtist[]
+    middleware:  RequireAdmin
+  }
+
+  action ApproveArtist {
+    description: "Approve an artist account"
+    method:      PUT
+    path:        /artists/:id/approve
+    output:      AdminActionMessage
+    middleware:  RequireAdmin
+  }
+
+  action RejectArtist {
+    description: "Reject an artist account"
+    method:      PUT
+    path:        /artists/:id/reject
+    output:      AdminActionMessage
+    middleware:  RequireAdmin
+  }
+
+  action GetPendingArtworks {
+    description: "Get all artworks waiting for approval"
+    method:      GET
+    path:        /artworks/pending
+    output:      PendingArtwork[]
+    middleware:  RequireAdmin
+  }
+
+  action ApproveArtwork {
+    description: "Approve an artwork"
+    method:      PUT
+    path:        /artworks/:id/approve
+    output:      AdminActionMessage
+    middleware:  RequireAdmin
+  }
+
+  action RejectArtwork {
+    description: "Reject an artwork"
+    method:      PUT
+    path:        /artworks/:id/reject
+    output:      AdminActionMessage
+    middleware:  RequireAdmin
+  }
+}

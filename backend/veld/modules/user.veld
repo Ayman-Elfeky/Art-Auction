@@ -1,0 +1,47 @@
+// Users module — CRUD endpoints for user management.
+
+import @models/user.model
+import @models/common.model
+
+module Users {
+  description: "User management"
+  prefix:      /api/users
+
+  action ListUsers {
+    description: "List all users with optional filters"
+    method:      GET
+    path:        /
+    query:       ListQuery
+    output:      User[]
+  }
+
+  action GetUser {
+    description: "Get a single user by ID"
+    method:      GET
+    path:        /:id
+    output:      User
+  }
+
+  action CreateUser {
+    description: "Create a new user"
+    method:      POST
+    path:        /
+    input:       CreateUserInput
+    output:      User
+  }
+
+  action UpdateUser {
+    description: "Update an existing user"
+    method:      PUT
+    path:        /:id
+    input:       UpdateUserInput
+    output:      User
+  }
+
+  action DeleteUser {
+    description: "Delete a user"
+    method:      DELETE
+    path:        /:id
+    output:      SuccessMessage
+  }
+}

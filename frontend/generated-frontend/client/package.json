@@ -1,0 +1,16 @@
+{
+  "name": "@veld/client",
+  "version": "0.0.0",
+  "private": true,
+  "types": "./api.ts",
+  "exports": {
+    ".": "./api.ts",
+    "./types": "./types.ts",
+    "./errors": "./errors.ts",
+    "./usersApi": "./usersApi.ts",
+    "./authApi": "./authApi.ts",
+    "./artworksApi": "./artworksApi.ts",
+    "./adminApi": "./adminApi.ts",
+    "./categoriesApi": "./categoriesApi.ts"
+  }
+}

@@ -1,0 +1,84 @@
+// Artwork API request/response models.
+
+model Artwork {
+  description: "Lightweight artwork card"
+  id:           uuid
+  title:        string
+  artistName:   string
+  categoryName: string
+  initialPrice: float
+  currentBid:   float
+  auctionEndTime: datetime
+  status:       string
+  imageUrl:     string
+}
+
+model ArtworkDetail {
+  description: "Detailed artwork payload"
+  id:             uuid
+  title:          string
+  description:    string
+  artistName:     string
+  artistId:       uuid
+  initialPrice:   float
+  buyNowPrice?:   float
+  currentBid:     float
+  auctionStartTime: datetime
+  auctionEndTime: datetime
+  status:         string
+  categoryName:   string
+  tags:           string[]
+  totalBids:      int
+  imageUrl:       string
+  createdAt:      datetime
+}
+
+model CreateArtworkInput {
+  description: "Payload used for create and update artwork"
+  title:            string
+  description:      string
+  initialPrice:     float
+  buyNowPrice?:     float
+  auctionStartTime: datetime
+  auctionEndTime:   datetime
+  categoryName:     string
+  tags:             string[]
+  imageUrl:         string
+}
+
+model ExtendAuctionTimeInput {
+  description: "Payload used to extend auction end time"
+  newEndTime: datetime
+}
+
+model ArtworkListQuery {
+  description: "Filters for the public artworks list"
+  pageNumber?:  int
+  pageSize?:    int
+  artistName?:  string
+  categoryName?: string
+  tagName?:     string
+  status?:      string
+}
+
+model PaginationQuery {
+  description: "Basic pagination query"
+  pageNumber?: int
+  pageSize?:   int
+}
+
+model PagedArtwork {
+  description: "Paged list response for artworks"
+  items:           Artwork[]
+  totalCount:      int
+  pageNumber:      int
+  pageSize:        int
+  totalPages:      int
+  hasNextPage:     bool
+  hasPreviousPage: bool
+}
+
+model ErrorMessage {
+  description: "Error response payload"
+  error: string
+}

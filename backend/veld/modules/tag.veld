@@ -1,0 +1,21 @@
+import @models/tag.model
+
+module Tags{
+    description: "Tags Management"
+    prefix: /api/tags
+
+    action CreateTag {
+        method: POST
+        path: /
+        input: CreateTagInput
+        output: Tag
+        middleware: RequireAdmin
+    }
+
+    action ListCategories {
+        description: "List all tags"
+        method:      GET
+        path:        /
+        output:      Tag[]
+    }
+}

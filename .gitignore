@@ -1,143 +1,54 @@
-# .NET Build Artifacts
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-
-# Visual Studio 2015/2017/2019/2022 cache/options directory
-.vs/
-
-# MSTest test results
-TestResults/
-
-# NUnit
-*.VisualState.xml
-
-# Build results of an ATL project
-[Dd]ebugPS/
-[Rr]eleasePS/
-dlldata.c
-
-# Benchmark results
-BenchmarkDotNet.Artifacts/
-
-# NuGet Packages
-*.nupkg
-# The packages folder can be ignored because of Package Restore
-**/[Pp]ackages/*
-# except build/, which is used as an MSBuild target.
-!**/[Pp]ackages/build/
-
-# NuGet Symbol Packages
-*.snupkg
-# NuGet package folders
-project.lock.json
-project.fragment.lock.json
-artifacts/
-
-# Local databases
-*.mdf
-*.ldf
-*.ndf
-
-# SQLite
-*.sqlite
-*.sqlite3
-*.db
-*.db-shm
-*.db-wal
-
-# User-specific files
-*.rsuser
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
 
-# User-specific files (MonoDevelop/Xamarin Studio)
-*.userprefs
-
-# Mono auto generated files
-mono_crash.*
-
-# JetBrains Rider
-.idea/
-*.sln.iml
-
-# Visual Studio Code
-.vscode/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# Frontend Dependencies
-node_modules/
+# Logs
+*.log
+logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# Production builds
-dist/
-build/
-
-# Environment variables
+.dll
+# Environment / secrets
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+**/appsettings.Development.json
 
-# Log files
-*.log
-logs/
+# .NET / C#
+**/bin/
+**/obj/
+**/TestResults/
+*.cache
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.nupkg
+*.snupkg
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# EF / tooling artifacts
+**/.vs/
+**/artifacts/
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Node / frontend
+**/node_modules/
+**/dist/
+**/build/
+**/.next/
+**/.nuxt/
+**/.parcel-cache/
+**/coverage/
 
-# Sensitive information - Keep appsettings.Development.json for now since it's in repo
-# appsettings.Development.json
-appsettings.Local.json
-*.pfx
-*.p12
-connectionstrings.json
+# Local agent / IDE session folders (keep out of git)
+.cursor/
+*.cursor-tmp
 
-# Azure Functions localsettings file
-local.settings.json
-
-# Temporary files
-*.tmp
-*.temp
-*~
-
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-*.txt
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Mac crap
-.DS_Store
+# Local API uploads (development)
+backend/src/API/wwwroot/uploads/

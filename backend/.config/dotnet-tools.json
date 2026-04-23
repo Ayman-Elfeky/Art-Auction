@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "maayn.veld": {
+      "version": "0.3.21",
+      "commands": [
+        "veld"
+      ],
+      "rollForward": false
+    },
+    "dotnet-ef": {
+      "version": "10.0.5",
+      "commands": [
+        "dotnet-ef"
+      ],
+      "rollForward": false
+    }
+  }
+}

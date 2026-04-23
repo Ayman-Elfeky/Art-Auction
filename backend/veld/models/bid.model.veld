@@ -1,0 +1,10 @@
+// bid model
+
+model Bid {
+  id: string
+  issuerId: string
+  artId: string
+ amount: decimal
+ highestBidder: bool
+ placed: datetime
+}

@@ -1,0 +1,67 @@
+// Artworks module — public browsing plus artist-owned mutations.
+
+import @models/artwork.model
+import @models/admin.model
+
+module Artworks {
+  description: "Artwork browsing and management"
+  prefix:      /api/artworks
+
+  action GetArtworks {
+    description: "Get artworks with optional filtering and pagination"
+    method:      GET
+    path:        /
+    query:       ArtworkListQuery
+    output:      PagedArtwork
+  }
+
+  action GetArtworkById {
+    description: "Get detailed information for one artwork"
+    method:      GET
+    path:        /:id
+    output:      ArtworkDetail
+  }
+
+  action GetArtworksByArtist {
+    description: "Get paged artworks for one artist"
+    method:      GET
+    path:        /artist/:artistId
+    query:       PaginationQuery
+    output:      PagedArtwork
+  }
+
+  action CreateArtwork {
+    description: "Create a new artwork (Artist role)"
+    method:      POST
+    path:        /
+    input:       CreateArtworkInput
+    output:      Artwork
+    middleware:  RequireArtist
+  }
+
+  action UpdateArtwork {
+    description: "Update an owned artwork (Artist role)"
+    method:      PUT
+    path:        /:id
+    input:       CreateArtworkInput
+    output:      Artwork
+    middleware:  RequireArtist
+  }
+
+  action DeleteArtwork {
+    description: "Delete an owned artwork (Artist role)"
+    method:      DELETE
+    path:        /:id
+    output:      AdminActionMessage
+    middleware:  RequireArtist
+  }
+
+  action ExtendAuctionTime {
+    description: "Extend auction end time (Artist role)"
+    method:      PUT
+    path:        /:id/extend
+    input:       ExtendAuctionTimeInput
+    output:      Artwork
+    middleware:  RequireArtist
+  }
+}

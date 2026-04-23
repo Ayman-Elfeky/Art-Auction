@@ -1,0 +1,30 @@
+// Authentication request and response models.
+
+import @models/user.model
+
+model LoginInput {
+  description: "Credentials for user login"
+  email:    string
+  password: string
+}
+
+model RegisterInput {
+  description: "Data for new account registration"
+  email:    string
+  name:     string
+  password: string
+  role?:    string
+}
+
+model RegisterArtistInput {
+  description: "Data for artist account registration"
+  email:    string
+  name:     string
+  password: string
+}
+
+model AuthToken {
+  description: "Token returned after successful authentication"
+  token: string
+  user:  User
+}

@@ -1,0 +1,24 @@
+// Admin API data contracts.
+
+model PendingArtist {
+  description: "Artist account waiting for admin approval"
+  id:        uuid
+  username:  string
+  email:     string
+  createdAt: datetime
+}
+
+model PendingArtwork {
+  description: "Artwork waiting for admin approval"
+  id:           uuid
+  title:        string
+  description:  string
+  initialPrice: float
+  artistName:   string
+  createdAt:    datetime
+}
+
+model AdminActionMessage {
+  description: "Message returned after approve/reject actions"
+  message: string
+}

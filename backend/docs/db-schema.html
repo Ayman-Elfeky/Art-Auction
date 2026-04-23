@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Art Auction DB Schema</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; line-height: 1.45; color: #222; }
+    h1, h2 { margin: 0 0 12px; }
+    .muted { color: #666; margin-bottom: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 24px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 14px; }
+    th { background: #f6f6f6; }
+    code { background: #f5f5f5; padding: 1px 4px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Online Art Auction - Database Schema (PostgreSQL)</h1>
+  <p class="muted">Generated for the current EF Core model in this repository.</p>
+
+  <h2>Users</h2>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+    <tr><td>Id</td><td>uuid (PK)</td><td>User id</td></tr>
+    <tr><td>Username</td><td>text</td><td>Display name</td></tr>
+    <tr><td>Email</td><td>text</td><td>Unique user email</td></tr>
+    <tr><td>PasswordHash</td><td>text</td><td>BCrypt hash (contains embedded salt)</td></tr>
+    <tr><td>Role</td><td>int</td><td>0=Admin, 1=Artist, 2=Buyer</td></tr>
+    <tr><td>IsApproved</td><td>boolean</td><td>Admin approval flag (for Artist)</td></tr>
+    <tr><td>IsActive</td><td>boolean</td><td>Soft active flag</td></tr>
+    <tr><td>ProfilePictureUrl</td><td>text nullable</td><td>Optional avatar</td></tr>
+    <tr><td>CreatedAt</td><td>timestamp</td><td>Created UTC</td></tr>
+    <tr><td>UpdatedAt</td><td>timestamp</td><td>Updated UTC</td></tr>
+  </table>
+
+  <h2>Categories</h2>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+    <tr><td>Id</td><td>uuid (PK)</td><td>Category id</td></tr>
+    <tr><td>Name</td><td>text</td><td>Unique category name</td></tr>
+  </table>
+
+  <h2>Artworks</h2>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+    <tr><td>Id</td><td>uuid (PK)</td><td>Artwork id</td></tr>
+    <tr><td>ArtistId</td><td>uuid (FK -> Users.Id)</td><td>Owner artist</td></tr>
+    <tr><td>CategoryId</td><td>uuid (FK -> Categories.Id)</td><td>Artwork category</td></tr>
+    <tr><td>Title</td><td>varchar(255)</td><td>Artwork title</td></tr>
+    <tr><td>Description</td><td>varchar(1000)</td><td>Artwork details</td></tr>
+    <tr><td>InitialPrice</td><td>numeric(18,2)</td><td>Starting price</td></tr>
+    <tr><td>BuyNowPrice</td><td>numeric(18,2) nullable</td><td>Optional direct purchase</td></tr>
+    <tr><td>CurrentBid</td><td>numeric(18,2)</td><td>Current top bid</td></tr>
+    <tr><td>AuctionStartTime</td><td>timestamp</td><td>Auction open time (UTC)</td></tr>
+    <tr><td>AuctionEndTime</td><td>timestamp</td><td>Auction close time (UTC)</td></tr>
+    <tr><td>Status</td><td>int</td><td>0=Pending,1=Approved,2=Rejected,3=Active,4=Ended</td></tr>
+    <tr><td>ImageUrl</td><td>varchar(1024)</td><td>Artwork image URL</td></tr>
+    <tr><td>CreatedAt</td><td>timestamp</td><td>Created UTC</td></tr>
+    <tr><td>UpdatedAt</td><td>timestamp</td><td>Updated UTC</td></tr>
+  </table>
+
+  <h2>ArtworkTags</h2>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+    <tr><td>Id</td><td>uuid (PK)</td><td>Tag record id</td></tr>
+    <tr><td>ArtworkId</td><td>uuid (FK -> Artworks.Id)</td><td>Tagged artwork</td></tr>
+    <tr><td>Tag</td><td>text</td><td>Tag value</td></tr>
+  </table>
+
+  <h2>Bids</h2>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+    <tr><td>Id</td><td>uuid (PK)</td><td>Bid id</td></tr>
+    <tr><td>ArtworkId</td><td>uuid (FK -> Artworks.Id)</td><td>Bid target</td></tr>
+    <tr><td>BuyerId</td><td>uuid (FK -> Users.Id)</td><td>Bidding user</td></tr>
+    <tr><td>Amount</td><td>numeric(18,2)</td><td>Bid amount</td></tr>
+    <tr><td>PlacedAt</td><td>timestamp</td><td>Placed UTC</td></tr>
+    <tr><td>IsWinning</td><td>boolean</td><td>Latest winning mark</td></tr>
+  </table>
+
+  <h2>Watchlists</h2>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+    <tr><td>Id</td><td>uuid (PK)</td><td>Watchlist record id</td></tr>
+    <tr><td>BuyerId</td><td>uuid (FK -> Users.Id)</td><td>Buyer owner</td></tr>
+    <tr><td>ArtworkId</td><td>uuid (FK -> Artworks.Id)</td><td>Watched artwork</td></tr>
+    <tr><td>AddedAt</td><td>timestamp</td><td>Added UTC</td></tr>
+  </table>
+
+  <h2>Notifications</h2>
+  <table>
+    <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+    <tr><td>Id</td><td>uuid (PK)</td><td>Notification id</td></tr>
+    <tr><td>UserId</td><td>uuid (FK -> Users.Id)</td><td>Notification recipient</td></tr>
+    <tr><td>RelatedArtworkId</td><td>uuid nullable (FK -> Artworks.Id)</td><td>Optional artwork reference</td></tr>
+    <tr><td>Title</td><td>varchar(200)</td><td>Short title</td></tr>
+    <tr><td>Message</td><td>varchar(2000)</td><td>Detailed text</td></tr>
+    <tr><td>Type</td><td>int</td><td>Notification enum</td></tr>
+    <tr><td>IsRead</td><td>boolean</td><td>Read status</td></tr>
+    <tr><td>CreatedAt</td><td>timestamp</td><td>Created UTC</td></tr>
+  </table>
+
+  <h2>Relationships Summary</h2>
+  <ul>
+    <li><code>Users (Artist) 1 - many Artworks</code></li>
+    <li><code>Categories 1 - many Artworks</code></li>
+    <li><code>Artworks 1 - many Bids</code></li>
+    <li><code>Users (Buyer) 1 - many Bids</code></li>
+    <li><code>Users (Buyer) many - many Artworks</code> through <code>Watchlists</code></li>
+    <li><code>Artworks 1 - many ArtworkTags</code></li>
+    <li><code>Users 1 - many Notifications</code></li>
+  </ul>
+</body>
+</html>

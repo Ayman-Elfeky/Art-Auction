@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ── Design Tokens ────────────────────────────────────────────── */
+:root {
+  /* Background */
+  --bg-base:       #f4f7fd;
+  --bg-surface:    #eef1f9;
+  --bg-card:       rgba(255, 255, 255, 0.92);
+  --bg-input:      #f8faff;
+  --bg-nav:        rgba(255, 255, 255, 0.88);
+
+  /* Text */
+  --text-primary:   #0f1c3a;
+  --text-secondary: #334870;
+  --text-muted:     #7a8ba8;
+
+  /* Gold accent */
+  --gold-300: #f0c55a;
+  --gold-400: #c9a227;
+  --gold-500: #a87c15;
+
+  /* Blue accent */
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #3b82f6;
+  --blue-600: #2563eb;
+
+  /* Borders */
+  --border-subtle: rgba(15, 28, 58, 0.08);
+  --border-card:   rgba(15, 28, 58, 0.12);
+  --border-glow:   rgba(201, 162, 39, 0.45);
+  --border-blue:   rgba(59, 130, 246, 0.35);
+
+  /* Shadows */
+  --shadow-card: 0 2px 20px rgba(15, 28, 58, 0.07), 0 1px 4px rgba(15, 28, 58, 0.05);
+  --shadow-hover: 0 8px 36px rgba(15, 28, 58, 0.12);
+  --shadow-btn:  0 4px 16px rgba(201, 162, 39, 0.3);
+
+  /* Radii */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-pill: 999px;
+
+  /* Transitions */
+  --transition:      0.2s ease;
+  --transition-slow: 0.4s ease;
+
+  /* Z-index */
+  --z-nav:   100;
+  --z-toast: 9999;
+}
+
+/* ── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+
+  /* Pearl blue gradient with subtle warm shimmer */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 15% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 85% 5%, rgba(201, 162, 39, 0.07) 0%, transparent 50%),
+    radial-gradient(ellipse 100% 60% at 50% 100%, rgba(37, 99, 235, 0.05) 0%, transparent 60%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Arabic support ────────────────────────────────────────────── */
+[dir="rtl"] { font-family: 'Amiri', 'Inter', sans-serif; }
+
+/* ── Selection ─────────────────────────────────────────────────── */
+::selection {
+  background: rgba(201, 162, 39, 0.2);
+  color: var(--text-primary);
+}
+

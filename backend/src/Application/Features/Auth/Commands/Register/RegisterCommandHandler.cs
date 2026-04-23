@@ -60,6 +60,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Au
         _context.Users.Add(user);
         await _context.SaveChangesAsync(cancellationToken);
 
+        var token = await _jwtService.GenerateToken(user, cancellationToken);
+
         return Result<AuthResponseDto>.Success(new AuthResponseDto
         {
             UserId = user.Id,

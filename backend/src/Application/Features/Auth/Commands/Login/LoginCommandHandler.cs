@@ -43,7 +43,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResp
         if (!user.IsActive)
             return Result<AuthResponseDto>.Failure("Your account has been deactivated.");
 
-        var token = _jwtService.GenerateToken(user);
+        var token = await _jwtService.GenerateToken(user, cancellationToken);
 
         return Result<AuthResponseDto>.Success(new AuthResponseDto
         {

@@ -12,6 +12,11 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
   <!-- Match implicit usings from Sdk.Web so generated middleware/controllers compile -->
   <ItemGroup>
     <Using Include="Microsoft.AspNetCore.Http" />

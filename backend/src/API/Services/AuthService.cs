@@ -5,8 +5,6 @@ using ArtAuction.Application.Features.Auth.Commands.Register;
 using ArtAuction.Application.Features.Auth.DTOs;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using VeldGenerated.Errors;
 using VeldGenerated.Models;
 using VeldGenerated.Services;
 
@@ -16,13 +14,13 @@ public class AuthService : IAuthService
 {
     private readonly IMediator _mediator;
     private readonly IApplicationDbContext _dbContext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICurrentUserContext _currentUserContext;
 
-    public AuthService(IMediator mediator, IApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+    public AuthService(IMediator mediator, IApplicationDbContext dbContext, ICurrentUserContext currentUserContext)
     {
         _mediator = mediator;
         _dbContext = dbContext;
-        _httpContextAccessor = httpContextAccessor;
+        _currentUserContext = currentUserContext;
     }
 
     public async Task<AuthToken> Login(LoginInput input)
@@ -74,22 +72,7 @@ public class AuthService : IAuthService
 
     public async Task<User> GetMe()
     {
-        var httpContext = _httpContextAccessor.HttpContext
-            ?? throw new UnauthorizedException("No HTTP context found.", "AUTH_CONTEXT_MISSING");
-
-        if (httpContext.User?.Identity?.IsAuthenticated != true)
-        {
-            throw new UnauthorizedException("Missing or invalid bearer token.", "AUTH_REQUIRED");
-        }
-
-        var sub = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-            ?? httpContext.User.FindFirst("sub")?.Value;
-
-        if (!Guid.TryParse(sub, out var userId))
-        {
-            throw new UnauthorizedException("Invalid token subject.", "AUTH_INVALID_SUBJECT");
-        }
-
+        var userId = _currentUserContext.GetRequiredUserId();
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId)
             ?? throw new UnauthorizedException("User not found.", "AUTH_USER_NOT_FOUND");
 

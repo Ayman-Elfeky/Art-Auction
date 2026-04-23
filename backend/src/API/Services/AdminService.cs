@@ -4,8 +4,8 @@ using ArtAuction.Application.Features.Admin.Commands.RejectArtistAccount;
 using ArtAuction.Application.Features.Admin.Commands.RejectArtwork;
 using ArtAuction.Application.Features.Admin.Queries.GetPendingArtists;
 using ArtAuction.Application.Features.Admin.Queries.GetPendingArtworks;
+using ArtAuction.Domain.Enums;
 using MediatR;
-using System.Security.Claims;
 using VeldGenerated.Models;
 using VeldGenerated.Services;
 
@@ -14,12 +14,12 @@ namespace Api.Services;
 public class AdminService : IAdminService
 {
     private readonly IMediator _mediator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICurrentUserContext _currentUserContext;
 
-    public AdminService(IMediator mediator, IHttpContextAccessor httpContextAccessor)
+    public AdminService(IMediator mediator, ICurrentUserContext currentUserContext)
     {
         _mediator = mediator;
-        _httpContextAccessor = httpContextAccessor;
+        _currentUserContext = currentUserContext;
     }
 
     public async Task<List<PendingArtist>> GetPendingArtists()
@@ -102,17 +102,7 @@ public class AdminService : IAdminService
 
     private void EnsureAdmin()
     {
-        var httpContext = _httpContextAccessor.HttpContext
-            ?? throw new InvalidOperationException("No HTTP context found.");
-        if (httpContext.User?.Identity?.IsAuthenticated != true)
-        {
-            throw new InvalidOperationException("Invalid or missing bearer token.");
-        }
-
-        var role = httpContext.User.FindFirst(ClaimTypes.Role)?.Value
-            ?? httpContext.User.FindFirst("role")?.Value;
-
-        if (!string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
+        if (!_currentUserContext.IsAuthenticated() || !_currentUserContext.IsInRole(ArtAuction.Domain.Enums.UserRole.Admin))
         {
             throw new InvalidOperationException("Only admin users can access this endpoint.");
         }

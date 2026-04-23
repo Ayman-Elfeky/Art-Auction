@@ -8,8 +8,6 @@ using ArtAuction.Application.Features.Artworks.Queries.GetArtworkById;
 using ArtAuction.Application.Features.Artworks.Queries.GetArtworks;
 using ArtAuction.Application.Features.Artworks.Queries.GetArtworksByArtist;
 using MediatR;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using VeldGenerated.Services;
 using ArtworkModel = VeldGenerated.Models.Artwork;
 using ArtworkDetailModel = VeldGenerated.Models.ArtworkDetail;
@@ -23,12 +21,12 @@ namespace Api.Services;
 public class ArtworksService : IArtworksService
 {
     private readonly IMediator _mediator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICurrentUserContext _currentUserContext;
 
-    public ArtworksService(IMediator mediator, IHttpContextAccessor httpContextAccessor)
+    public ArtworksService(IMediator mediator, ICurrentUserContext currentUserContext)
     {
         _mediator = mediator;
-        _httpContextAccessor = httpContextAccessor;
+        _currentUserContext = currentUserContext;
     }
 
     public async Task<PagedArtworkModel> GetArtworks(Dictionary<string, string> query)
@@ -185,26 +183,7 @@ public class ArtworksService : IArtworksService
             : fallback;
     }
 
-    private Guid GetCurrentUserId()
-    {
-        var httpContext = _httpContextAccessor.HttpContext
-            ?? throw new InvalidOperationException("No HTTP context found.");
-        var authHeader = httpContext.Request.Headers.Authorization.ToString();
-        if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("Missing bearer token.");
-        }
-
-        var token = authHeader["Bearer ".Length..].Trim();
-        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-        var sub = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub || c.Type == ClaimTypes.NameIdentifier)?.Value;
-        if (!Guid.TryParse(sub, out var userId))
-        {
-            throw new InvalidOperationException("Invalid token subject.");
-        }
-
-        return userId;
-    }
+    private Guid GetCurrentUserId() => _currentUserContext.GetRequiredUserId();
 
     private static ArtworkModel MapArtwork(ArtworkDto dto)
     {

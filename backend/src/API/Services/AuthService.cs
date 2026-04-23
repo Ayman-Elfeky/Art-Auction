@@ -3,8 +3,6 @@ using ArtAuction.Application.Features.Auth.Commands.Register;
 using ArtAuction.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using VeldGenerated.Models;
 using VeldGenerated.Services;
 
@@ -14,13 +12,13 @@ public class AuthService : IAuthService
 {
     private readonly IMediator _mediator;
     private readonly IApplicationDbContext _dbContext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICurrentUserContext _currentUserContext;
 
-    public AuthService(IMediator mediator, IApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+    public AuthService(IMediator mediator, IApplicationDbContext dbContext, ICurrentUserContext currentUserContext)
     {
         _mediator = mediator;
         _dbContext = dbContext;
-        _httpContextAccessor = httpContextAccessor;
+        _currentUserContext = currentUserContext;
     }
 
     public async Task<AuthToken> Login(LoginInput input)
@@ -57,22 +55,7 @@ public class AuthService : IAuthService
 
     public async Task<User> GetMe()
     {
-        var httpContext = _httpContextAccessor.HttpContext
-            ?? throw new InvalidOperationException("No HTTP context found.");
-        var authHeader = httpContext.Request.Headers.Authorization.ToString();
-        if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("Missing bearer token.");
-        }
-
-        var token = authHeader["Bearer ".Length..].Trim();
-        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-        var sub = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub || c.Type == ClaimTypes.NameIdentifier)?.Value;
-        if (!Guid.TryParse(sub, out var userId))
-        {
-            throw new InvalidOperationException("Invalid token subject.");
-        }
-
+        var userId = _currentUserContext.GetRequiredUserId();
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId)
             ?? throw new InvalidOperationException("User not found.");
         return MapUser(user);

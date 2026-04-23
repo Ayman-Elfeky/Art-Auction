@@ -1,3 +1,5 @@
+using ArtAuction.Application.Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using VeldGenerated.Models;
 using VeldGenerated.Services;
 
@@ -5,68 +7,130 @@ namespace Api.Services;
 
 public class UsersService : IUsersService
 {
+    private readonly IApplicationDbContext _dbContext;
+
+    public UsersService(IApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
     public Task<List<User>> ListUsers(Dictionary<string, string> query)
     {
-        IEnumerable<User> users = InMemoryUserStore.Users;
+        var usersQuery = _dbContext.Users
+            .AsNoTracking()
+            .AsQueryable();
 
         if (query.TryGetValue("email", out var email) && !string.IsNullOrWhiteSpace(email))
         {
-            users = users.Where(u => u.Email.Contains(email, StringComparison.OrdinalIgnoreCase));
+            usersQuery = usersQuery.Where(u => u.Email.Contains(email));
         }
 
         if (query.TryGetValue("name", out var name) && !string.IsNullOrWhiteSpace(name))
         {
-            users = users.Where(u => u.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            usersQuery = usersQuery.Where(u => u.Username.Contains(name));
         }
 
-        return Task.FromResult(users.ToList());
+        return usersQuery
+            .OrderByDescending(u => u.CreatedAt)
+            .Select(u => new User(
+                u.Id,
+                u.Email,
+                u.Username,
+                null,
+                u.Role == ArtAuction.Domain.Enums.UserRole.Admin ? UserRole.Admin :
+                (u.Role == ArtAuction.Domain.Enums.UserRole.Artist ? UserRole.Artist : UserRole.User),
+                u.IsApproved,
+                u.CreatedAt))
+            .ToListAsync();
     }
 
-    public Task<User> GetUser(string Id)
+    public async Task<User> GetUser(string Id)
     {
-        var user = FindUser(Id) ?? InMemoryUserStore.Users.First();
-        return Task.FromResult(user);
+        if (!Guid.TryParse(Id, out var guid))
+        {
+            throw new InvalidOperationException("Invalid user id.");
+        }
+
+        var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == guid)
+            ?? throw new InvalidOperationException("User not found.");
+        return new User(
+            user.Id,
+            user.Email,
+            user.Username,
+            null,
+            user.Role == ArtAuction.Domain.Enums.UserRole.Admin ? UserRole.Admin :
+            (user.Role == ArtAuction.Domain.Enums.UserRole.Artist ? UserRole.Artist : UserRole.User),
+            user.IsApproved,
+            user.CreatedAt);
     }
 
-    public Task<User> CreateUser(CreateUserInput input)
+    public async Task<User> CreateUser(CreateUserInput input)
     {
-        var user = InMemoryUserStore.Create(input.Email, input.Name, UserRole.User);
-        return Task.FromResult(user);
+        var user = new ArtAuction.Domain.Entities.User
+        {
+            Id = Guid.NewGuid(),
+            Email = input.Email,
+            Username = input.Name,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(input.Password),
+            Role = ArtAuction.Domain.Enums.UserRole.Buyer,
+            IsApproved = true,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        _dbContext.Users.Add(user);
+        await _dbContext.SaveChangesAsync();
+        return new User(user.Id, user.Email, user.Username, null, UserRole.User, user.IsApproved, user.CreatedAt);
     }
 
-    public Task<User> UpdateUser(string Id, UpdateUserInput input)
+    public async Task<User> UpdateUser(string Id, UpdateUserInput input)
     {
-        var user = FindUser(Id) ?? InMemoryUserStore.Users.First();
+        if (!Guid.TryParse(Id, out var guid))
+        {
+            throw new InvalidOperationException("Invalid user id.");
+        }
+
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == guid)
+            ?? throw new InvalidOperationException("User not found.");
 
         if (!string.IsNullOrWhiteSpace(input.Name))
         {
-            user.Name = input.Name;
+            user.Username = input.Name;
         }
 
         if (input.Bio is not null)
         {
-            user.Bio = input.Bio;
+            user.ProfilePictureUrl = input.Bio;
         }
 
-        if (input.Role.HasValue)
+        user.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
+
+        return new User(
+            user.Id,
+            user.Email,
+            user.Username,
+            user.ProfilePictureUrl,
+            user.Role == ArtAuction.Domain.Enums.UserRole.Admin ? UserRole.Admin :
+            (user.Role == ArtAuction.Domain.Enums.UserRole.Artist ? UserRole.Artist : UserRole.User),
+            user.IsApproved,
+            user.CreatedAt);
+    }
+
+    public async Task<SuccessMessage> DeleteUser(string Id)
+    {
+        if (!Guid.TryParse(Id, out var guid))
         {
-            user.Role = input.Role.Value;
+            throw new InvalidOperationException("Invalid user id.");
         }
 
-        return Task.FromResult(user);
-    }
-
-    public Task<SuccessMessage> DeleteUser(string Id)
-    {
-        var user = FindUser(Id);
-        var removed = user is not null && InMemoryUserStore.Users.Remove(user);
-        return Task.FromResult(new SuccessMessage(removed, removed ? "User deleted." : "User not found."));
-    }
-
-    private static User? FindUser(string id)
-    {
-        return Guid.TryParse(id, out var guid)
-            ? InMemoryUserStore.Users.FirstOrDefault(u => u.Id == guid)
-            : null;
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == guid);
+        if (user is null)
+        {
+            return new SuccessMessage(false, "User not found.");
+        }
+        _dbContext.Users.Remove(user);
+        await _dbContext.SaveChangesAsync();
+        return new SuccessMessage(true, "User deleted.");
     }
 }

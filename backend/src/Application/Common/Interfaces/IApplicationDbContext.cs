@@ -12,6 +12,10 @@ public interface IApplicationDbContext
     DbSet<Bid> Bids { get; }
     DbSet<Watchlist> Watchlists { get; }
     DbSet<Notification> Notifications { get; }
+    DbSet<Role> Roles { get; }
+    DbSet<Permission> Permissions { get; }
+    DbSet<RolePermission> RolePermissions { get; }
+    DbSet<UserRoleAssignment> UserRoleAssignments { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

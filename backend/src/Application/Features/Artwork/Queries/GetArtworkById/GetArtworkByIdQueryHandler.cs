@@ -22,7 +22,6 @@ public class GetArtworkByIdQueryHandler : IRequestHandler<GetArtworkByIdQuery, R
             .Include(a => a.Artist)
             .Include(a => a.Category)
             .Include(a => a.Tags)
-            .ThenInclude(at => at.Tag)
             .Include(a => a.Bids)
             .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 

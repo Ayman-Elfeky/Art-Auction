@@ -39,6 +39,10 @@ public class GetArtworksQueryHandler : IRequestHandler<GetArtworksQuery, PagedRe
         {
             query = query.Where(a => a.Status.ToString() == request.FilterParams.Status);
         }
+        else
+        {
+            query = query.Where(a => a.Status != Domain.Enums.ArtworkStatus.Pending && a.Status != Domain.Enums.ArtworkStatus.Rejected);
+        }
 
         // Get total count before pagination
         var totalCount = await query.CountAsync(cancellationToken);

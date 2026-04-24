@@ -68,6 +68,7 @@ builder.Services.AddCors(options =>
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
                 "http://localhost:4173",
+                "https://art-auction-seven.vercel.app",
                 "http://127.0.0.1:4173")
             .AllowAnyHeader()
             .AllowAnyMethod()

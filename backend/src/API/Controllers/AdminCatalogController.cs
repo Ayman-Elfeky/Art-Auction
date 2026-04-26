@@ -128,12 +128,21 @@ public sealed class AdminCatalogController : ControllerBase
 	[HttpGet("tags")]
 	public async Task<IActionResult> GetTags()
 	{
-		var tags = await _context.ArtworkTags
+		var artworkTags = await _context.ArtworkTags
 			.Where(t => !string.IsNullOrWhiteSpace(t.Tag))
 			.Select(t => t.Tag.Trim())
-			.Distinct()
-			.OrderBy(t => t)
 			.ToListAsync();
+
+		var adminTags = await _context.AdminTags
+			.Where(t => !string.IsNullOrWhiteSpace(t.Name))
+			.Select(t => t.Name.Trim())
+			.ToListAsync();
+
+		var tags = artworkTags
+			.Concat(adminTags)
+			.Distinct(StringComparer.OrdinalIgnoreCase)
+			.OrderBy(t => t)
+			.ToList();
 
 		return Ok(tags);
 	}
@@ -147,19 +156,18 @@ public sealed class AdminCatalogController : ControllerBase
 			return BadRequest(new { message = "Tag name is required." });
 		}
 
-		var exists = await _context.ArtworkTags.AnyAsync(t => t.Tag.ToLower() == tag.ToLower());
+		var exists = await _context.AdminTags.AnyAsync(t => t.Name.ToLower() == tag.ToLower());
 		if (exists)
 		{
 			return Conflict(new { message = "Tag already exists." });
 		}
 
-        var artworkTag = new ArtworkTag
-        {
-            Id = Guid.NewGuid(),
-            ArtworkId = Guid.Empty, // Placeholder, will be ignored since tag is unique
-            Tag = tag
-        };
-		_context.ArtworkTags.Add(artworkTag);
+		_context.AdminTags.Add(new AdminTag
+		{
+			Id = Guid.NewGuid(),
+			Name = tag,
+			CreatedAt = DateTime.UtcNow
+		});
 		await _context.SaveChangesAsync();
 
 		return Ok(new
@@ -189,7 +197,10 @@ public sealed class AdminCatalogController : ControllerBase
 			.Where(t => t.Tag.ToLower() == oldName.ToLower())
 			.ToListAsync();
 
-		if (tagsToRename.Count == 0)
+		var adminTag = await _context.AdminTags
+			.FirstOrDefaultAsync(t => t.Name.ToLower() == oldName.ToLower());
+
+		if (tagsToRename.Count == 0 && adminTag is null)
 		{
 			return NotFound(new { message = "Tag not found." });
 		}
@@ -197,6 +208,11 @@ public sealed class AdminCatalogController : ControllerBase
 		foreach (var item in tagsToRename)
 		{
 			item.Tag = newName;
+		}
+
+		if (adminTag is not null)
+		{
+			adminTag.Name = newName;
 		}
 
 		try
@@ -224,12 +240,24 @@ public sealed class AdminCatalogController : ControllerBase
 			.Where(t => t.Tag.ToLower() == normalized.ToLower())
 			.ToListAsync();
 
-		if (tagsToDelete.Count == 0)
+		var adminTag = await _context.AdminTags
+			.FirstOrDefaultAsync(t => t.Name.ToLower() == normalized.ToLower());
+
+		if (tagsToDelete.Count == 0 && adminTag is null)
 		{
 			return NotFound(new { message = "Tag not found." });
 		}
 
-		_context.ArtworkTags.RemoveRange(tagsToDelete);
+		if (tagsToDelete.Count > 0)
+		{
+			_context.ArtworkTags.RemoveRange(tagsToDelete);
+		}
+
+		if (adminTag is not null)
+		{
+			_context.AdminTags.Remove(adminTag);
+		}
+
 		await _context.SaveChangesAsync();
 
 		return Ok(new { message = "Tag deleted." });

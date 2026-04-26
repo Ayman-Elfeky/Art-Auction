@@ -9,6 +9,7 @@ public interface IApplicationDbContext
     DbSet<Artwork> Artworks { get; }
     DbSet<Category> Categories { get; }
     DbSet<ArtworkTag> ArtworkTags { get; }
+    DbSet<AdminTag> AdminTags { get; }
     DbSet<Bid> Bids { get; }
     DbSet<Watchlist> Watchlists { get; }
     DbSet<Notification> Notifications { get; }

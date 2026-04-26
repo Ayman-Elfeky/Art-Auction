@@ -15,6 +15,7 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Artwork> Artworks => Set<Artwork>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<ArtworkTag> ArtworkTags => Set<ArtworkTag>();
+    public DbSet<AdminTag> AdminTags => Set<AdminTag>();
     public DbSet<Bid> Bids => Set<Bid>();
     public DbSet<Watchlist> Watchlists => Set<Watchlist>();
     public DbSet<Notification> Notifications => Set<Notification>();

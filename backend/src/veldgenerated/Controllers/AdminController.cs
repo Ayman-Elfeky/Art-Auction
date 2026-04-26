@@ -14,7 +14,6 @@ using ArtAuction.Application.Features.Admin.Queries.GetAllTags;
 
 namespace VeldGenerated.Controllers;
 
-/// <summary>Admin review and approval endpoints</summary>
 [ApiController]
 [Route("api/admin")]
 public class AdminController : ControllerBase

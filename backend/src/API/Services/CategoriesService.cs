@@ -28,7 +28,7 @@ public class CategoriesService : ICategoriesService
 
     public async Task<Category> CreateCategory(CreateCategoryInput input)
     {
-        EnsureAdmin();
+        // EnsureAdmin();
 
         if (string.IsNullOrWhiteSpace(input.Name))
         {

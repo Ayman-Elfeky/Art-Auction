@@ -1,6 +1,7 @@
 using ArtAuction.Domain.Authorization;
 using ArtAuction.Domain.Entities;
 using ArtAuction.Domain.Enums;
+using ArtAuction.Application.Common.Security;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArtAuction.Infrastructure.Persistence.Seeding;
@@ -135,7 +136,16 @@ public static class ApplicationDbSeeder
     {
         var existing = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
         if (existing is not null)
+        {
+            if (string.IsNullOrWhiteSpace(existing.PasswordSalt))
+            {
+                existing.PasswordSalt = PasswordHashing.GenerateSalt();
+                existing.PasswordHash = PasswordHashing.HashPassword(password, existing.PasswordSalt);
+                existing.UpdatedAt = now;
+            }
+
             return existing;
+        }
 
         var user = CreateUser(username, email, password, role, isApproved, now);
         dbContext.Users.Add(user);
@@ -150,7 +160,6 @@ public static class ApplicationDbSeeder
         DateTime assignedAt,
         CancellationToken cancellationToken)
     {
-        // Schema allows at most one role row per user (unique index on UserId).
         if (await dbContext.UserRoleAssignments.AnyAsync(ua => ua.UserId == userId, cancellationToken))
             return;
 
@@ -221,14 +230,14 @@ public static class ApplicationDbSeeder
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────
     private static User CreateUser(string username, string email, string password, UserRole role, bool isApproved, DateTime now) =>
         new()
         {
             Id           = Guid.NewGuid(),
             Username     = username,
             Email        = email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+            PasswordSalt = PasswordHashing.GenerateSalt(),
+            PasswordHash = string.Empty,
             Role         = role,
             IsApproved   = isApproved,
             IsActive     = true,

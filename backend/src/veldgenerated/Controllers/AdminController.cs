@@ -14,7 +14,6 @@ using ArtAuction.Application.Features.Admin.Queries.GetAllTags;
 
 namespace VeldGenerated.Controllers;
 
-/// <summary>Admin review and approval endpoints</summary>
 [ApiController]
 [Route("api/admin")]
 public class AdminController : ControllerBase
@@ -28,7 +27,6 @@ public class AdminController : ControllerBase
         _sender = sender;
     }
 
-    /// <summary>Get all artists waiting for approval</summary>
     [HttpGet("artists/pending")]
     [Authorize(Policy = Permissions.ManageArtistAccounts)]
     public async Task<IActionResult> GetPendingArtists()
@@ -44,7 +42,6 @@ public class AdminController : ControllerBase
         }
     }
 
-    /// <summary>Approve an artist account</summary>
     [HttpPut("artists/{id}/approve")]
     [Authorize(Policy = Permissions.ManageArtistAccounts)]
     public async Task<IActionResult> ApproveArtist([FromRoute] string Id)
@@ -92,7 +89,6 @@ public class AdminController : ControllerBase
         }
     }
 
-    /// <summary>Approve an artwork</summary>
     [HttpPut("artworks/{id}/approve")]
     [Authorize(Policy = Permissions.ReviewArtworks)]
     public async Task<IActionResult> ApproveArtwork([FromRoute] string Id)
@@ -108,7 +104,6 @@ public class AdminController : ControllerBase
         }
     }
 
-    /// <summary>Reject an artwork</summary>
     [HttpPut("artworks/{id}/reject")]
     [Authorize(Policy = Permissions.ReviewArtworks)]
     public async Task<IActionResult> RejectArtwork([FromRoute] string Id)
@@ -124,12 +119,7 @@ public class AdminController : ControllerBase
         }
     }
 
-    // ─── CATEGORY ENDPOINTS ───────────────────────────────────────────────────
 
-    /// <summary>
-    /// POST /api/admin/categories
-    /// Creates a new category that artists can use when posting artworks.
-    /// </summary>
     [HttpPost("categories")]
     [Authorize(Policy = Permissions.CatalogManage)]
     public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryCommand command)
@@ -145,12 +135,6 @@ public class AdminController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// GET /api/admin/categories
-    /// Returns all available categories.
-    /// Artists use this to pick a category when creating an artwork.
-    /// Buyers use this to filter artworks.
-    /// </summary>
     [HttpGet("categories")]
     [Authorize(Policy = Permissions.CatalogManage)]
     public async Task<IActionResult> GetAllCategories()
@@ -159,12 +143,6 @@ public class AdminController : ControllerBase
         return Ok(result);
     }
 
-    // ─── TAG ENDPOINTS ────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// POST /api/admin/tags
-    /// Creates a new tag that artists can use when posting artworks.
-    /// </summary>
     [HttpPost("tags")]
     [Authorize(Policy = Permissions.CatalogManage)]
     public async Task<IActionResult> CreateTag([FromBody] CreateTagCommand command)
@@ -180,12 +158,6 @@ public class AdminController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// GET /api/admin/tags
-    /// Returns all available tags.
-    /// Artists use this to pick tags when creating an artwork.
-    /// Buyers use this to filter artworks.
-    /// </summary>
     [HttpGet("tags")]
     [Authorize(Policy = Permissions.CatalogManage)]
     public async Task<IActionResult> GetAllTags()

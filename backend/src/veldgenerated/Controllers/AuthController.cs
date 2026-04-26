@@ -68,7 +68,6 @@ public class AuthController : ControllerBase
         }
     }
 
-    /// <summary>Get the currently authenticated user</summary>
     [HttpGet("me")]
     [Authorize]
     public async Task<IActionResult> GetMe()

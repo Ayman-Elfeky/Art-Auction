@@ -12,11 +12,13 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Au
 {
     private readonly IApplicationDbContext _context;
     private readonly IJwtService _jwtService;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public RegisterCommandHandler(IApplicationDbContext context, IJwtService jwtService)
+    public RegisterCommandHandler(IApplicationDbContext context, IJwtService jwtService, IPasswordHasher passwordHasher)
     {
         _context = context;
         _jwtService = jwtService;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<Result<AuthResponseDto>> Handle(
@@ -43,7 +45,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Au
             Id = Guid.NewGuid(),
             Username = request.Username,
             Email = request.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            PasswordSalt = _passwordHasher.GenerateSalt(),
+            PasswordHash = string.Empty,
             Role = request.Role,
             // Buyers are auto-approved, Artists need admin approval
             IsApproved = request.Role == UserRole.Buyer,
@@ -51,6 +54,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Au
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
+
+        user.PasswordHash = _passwordHasher.HashPassword(request.Password, user.PasswordSalt);
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync(cancellationToken);

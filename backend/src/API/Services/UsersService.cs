@@ -8,10 +8,12 @@ namespace Api.Services;
 public class UsersService : IUsersService
 {
     private readonly IApplicationDbContext _dbContext;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public UsersService(IApplicationDbContext dbContext)
+    public UsersService(IApplicationDbContext dbContext, IPasswordHasher passwordHasher)
     {
         _dbContext = dbContext;
+        _passwordHasher = passwordHasher;
     }
 
     public Task<List<User>> ListUsers(Dictionary<string, string> query)
@@ -71,13 +73,15 @@ public class UsersService : IUsersService
             Id = Guid.NewGuid(),
             Email = input.Email,
             Username = input.Name,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(input.Password),
+            PasswordSalt = _passwordHasher.GenerateSalt(),
+            PasswordHash = string.Empty,
             Role = ArtAuction.Domain.Enums.UserRole.Buyer,
             IsApproved = true,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
+        user.PasswordHash = _passwordHasher.HashPassword(input.Password, user.PasswordSalt);
         _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync();
         return new User(user.Id, user.Email, user.Username, null, UserRole.User, user.IsApproved, user.CreatedAt);

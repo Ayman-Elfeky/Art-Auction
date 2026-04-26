@@ -10,11 +10,13 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResp
 {
     private readonly IApplicationDbContext _context;
     private readonly IJwtService _jwtService;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public LoginCommandHandler(IApplicationDbContext context, IJwtService jwtService)
+    public LoginCommandHandler(IApplicationDbContext context, IJwtService jwtService, IPasswordHasher passwordHasher)
     {
         _context = context;
         _jwtService = jwtService;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<Result<AuthResponseDto>> Handle(
@@ -29,7 +31,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResp
             return Result<AuthResponseDto>.Failure("Invalid email or password.");
 
         // Verify password
-        if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        if (!_passwordHasher.VerifyPassword(request.Password, user.PasswordSalt, user.PasswordHash))
             return Result<AuthResponseDto>.Failure("Invalid email or password.");
 
         // Check if account is active

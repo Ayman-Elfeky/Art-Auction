@@ -14,7 +14,6 @@ import {
 import { api, type RbacPermission, type RbacRole, type RbacUser } from "../lib/api";
 import type { JwtClaims, PendingArtist, PendingArtwork } from "../types";
 
-// ── Categories & Tags CRUD tab ───────────────────────────────────
 function CatalogTab({ token }: { token: string }) {
   const { t } = useLang();
   const [categories, setCategories] = useState<{ id: string; name: string; description: string }[]>([]);

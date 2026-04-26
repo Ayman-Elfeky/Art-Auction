@@ -23,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext>(provider =>
             provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<INotificationService, NotificationService>();
 
         return services;

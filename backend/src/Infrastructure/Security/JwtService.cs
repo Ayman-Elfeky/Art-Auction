@@ -24,9 +24,9 @@ public sealed class JwtService : IJwtService
 
     public async Task<string> GenerateToken(User user, CancellationToken cancellationToken = default)
     {
-        var key = _configuration["Jwt:Key"] ?? "dev-key-change-me-32-characters-minimum";
-        var issuer = _configuration["Jwt:Issuer"] ?? "ArtAuction";
-        var audience = _configuration["Jwt:Audience"] ?? "ArtAuctionClients";
+        var key = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is not configured.");
+        var issuer = _configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("Jwt:Issuer is not configured.");
+        var audience = _configuration["Jwt:Audience"] ?? throw new InvalidOperationException("Jwt:Audience is not configured.");
         var expiresMinutes = int.TryParse(_configuration["Jwt:ExpiresMinutes"], out var value) ? value : 120;
 
         var roleWithPermissions = await _context.UserRoleAssignments

@@ -110,7 +110,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// HTTPS redirection is handled at the reverse-proxy / load-balancer level.
+// Enabling it inside the container (HTTP-only listener) causes ERR_EMPTY_RESPONSE.
+// app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCors("Frontend");
 app.UseAuthentication();

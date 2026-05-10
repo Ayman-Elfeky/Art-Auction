@@ -5,19 +5,42 @@ import { useAuth } from "../context/AuthContext";
 import { useLang } from "../context/LangContext";
 import { useGlobalToast } from "../context/ToastContext";
 
+function validatePassword(password: string, t: (en: string, ar: string) => string): string | null {
+  if (password.length < 8)
+    return t("Password must be at least 8 characters.", "كلمة المرور يجب أن تكون 8 أحرف على الأقل.");
+  if (!/[A-Z]/.test(password))
+    return t("Password must contain at least one uppercase letter.", "كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل.");
+  if (!/[a-z]/.test(password))
+    return t("Password must contain at least one lowercase letter.", "كلمة المرور يجب أن تحتوي على حرف صغير واحد على الأقل.");
+  if (!/\d/.test(password))
+    return t("Password must contain at least one number.", "كلمة المرور يجب أن تحتوي على رقم واحد على الأقل.");
+  return null;
+}
+
 export function RegisterArtistPage() {
   const { registerArtist } = useAuth();
   const { t } = useLang();
   const navigate = useNavigate();
   const toast = useGlobalToast();
-  const [name, setName]   = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName]         = useState("");
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [loading, setLoading]   = useState(false);
+  const [done, setDone]         = useState(false);
+
+  function onPasswordChange(value: string) {
+    setPassword(value);
+    setPasswordError(value ? validatePassword(value, t) : null);
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
+    const err = validatePassword(password, t);
+    if (err) {
+      setPasswordError(err);
+      return;
+    }
     setLoading(true);
     try {
       await registerArtist(name, email, password);
@@ -71,10 +94,30 @@ export function RegisterArtistPage() {
           </div>
           <div className="field">
             <label htmlFor="art-reg-password">{t("Password", "كلمة المرور")}</label>
-            <input id="art-reg-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
+            <input
+              id="art-reg-password"
+              type="password"
+              value={password}
+              onChange={(e) => onPasswordChange(e.target.value)}
+              placeholder="••••••••"
+              required
+              aria-describedby="art-reg-password-hint"
+            />
+            {passwordError ? (
+              <p id="art-reg-password-hint" style={{ fontSize: "0.78rem", color: "var(--red-400, #f87171)", marginTop: "0.3rem" }}>
+                {passwordError}
+              </p>
+            ) : (
+              <p id="art-reg-password-hint" style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "0.3rem" }}>
+                {t(
+                  "Min 8 characters — uppercase, lowercase & number required.",
+                  "8 أحرف على الأقل — يجب أن تحتوي على حرف كبير وصغير ورقم.",
+                )}
+              </p>
+            )}
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: "100%" }}>
+          <button type="submit" className="btn btn-primary" disabled={loading || !!passwordError} style={{ width: "100%" }}>
             {loading ? t("Submitting…", "جاري الإرسال…") : t("Apply as Artist →", "تقديم طلب فنان →")}
           </button>
 

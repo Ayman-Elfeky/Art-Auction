@@ -7,16 +7,41 @@ using ArtAuction.Application.Features.Artworks.DTOs;
 using ArtAuction.Application.Features.Artworks.Queries.GetArtworkById;
 using ArtAuction.Application.Features.Artworks.Queries.GetArtworks;
 using ArtAuction.Application.Features.Artworks.Queries.GetArtworksByArtist;
+using Api.Models;
 using MediatR;
-using VeldGenerated.Services;
-using ArtworkModel = VeldGenerated.Models.Artwork;
-using ArtworkDetailModel = VeldGenerated.Models.ArtworkDetail;
-using PagedArtworkModel = VeldGenerated.Models.PagedArtwork;
-using CreateArtworkInputModel = VeldGenerated.Models.CreateArtworkInput;
-using ExtendAuctionTimeInputModel = VeldGenerated.Models.ExtendAuctionTimeInput;
-using AdminActionMessageModel = VeldGenerated.Models.AdminActionMessage;
+using ArtworkModel = Api.Models.Artwork;
+using ArtworkDetailModel = Api.Models.ArtworkDetail;
+using PagedArtworkModel = Api.Models.PagedArtwork;
+using CreateArtworkInputModel = Api.Models.CreateArtworkInput;
+using ExtendAuctionTimeInputModel = Api.Models.ExtendAuctionTimeInput;
+using AdminActionMessageModel = Api.Models.AdminActionMessage;
 
 namespace Api.Services;
+
+/// <summary>Artwork browsing and management</summary>
+public interface IArtworksService
+{
+    /// <summary>Get artworks with optional filtering and pagination</summary>
+    Task<PagedArtworkModel> GetArtworks(Dictionary<string, string> query);
+
+    /// <summary>Get detailed information for one artwork</summary>
+    Task<ArtworkDetailModel> GetArtworkById(string Id);
+
+    /// <summary>Get paged artworks for one artist</summary>
+    Task<PagedArtworkModel> GetArtworksByArtist(string ArtistId, Dictionary<string, string> query);
+
+    /// <summary>Create a new artwork (Artist role)</summary>
+    Task<ArtworkModel> CreateArtwork(CreateArtworkInputModel input);
+
+    /// <summary>Update an owned artwork (Artist role)</summary>
+    Task<ArtworkModel> UpdateArtwork(string Id, CreateArtworkInputModel input);
+
+    /// <summary>Delete an owned artwork (Artist role)</summary>
+    Task<AdminActionMessageModel> DeleteArtwork(string Id);
+
+    /// <summary>Extend auction end time (Artist role)</summary>
+    Task<ArtworkModel> ExtendAuctionTime(string Id, ExtendAuctionTimeInputModel input);
+}
 
 public class ArtworksService : IArtworksService
 {

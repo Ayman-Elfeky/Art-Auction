@@ -1,0 +1,8 @@
+namespace Api.Errors;
+
+/// <summary>400 Bad Request — throw from service implementations for quick status responses.</summary>
+public class BadRequestException : ApiException
+{
+    public BadRequestException(string? message = null, string? code = null)
+        : base(code ?? "BAD_REQUEST", 400, message ?? "Bad Request") { }
+}

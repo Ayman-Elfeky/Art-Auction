@@ -74,6 +74,7 @@ export type Bid = {
   amount: number;
   highestBidder: boolean;
   placed: string;
+  bidderName?: string | null;
 };
 
 export type NotificationDto = {

@@ -1,0 +1,40 @@
+using System.Text.Json.Serialization;
+
+namespace Api.Models;
+
+public class Bid
+{
+    [JsonPropertyName("id")]
+    public string Id { get; set; }
+
+    [JsonPropertyName("issuerId")]
+    public string IssuerId { get; set; }
+
+    [JsonPropertyName("artId")]
+    public string ArtId { get; set; }
+
+    [JsonPropertyName("amount")]
+    public decimal Amount { get; set; }
+
+    [JsonPropertyName("highestBidder")]
+    public bool HighestBidder { get; set; }
+
+    [JsonPropertyName("placed")]
+    public DateTime Placed { get; set; }
+
+    [JsonPropertyName("bidderName")]
+    public string? BidderName { get; set; }
+
+    public Bid() { }
+
+    public Bid(string id, string issuerId, string artId, decimal amount, bool highestBidder, DateTime placed, string? bidderName = null)
+    {
+        Id = id;
+        IssuerId = issuerId;
+        ArtId = artId;
+        Amount = amount;
+        HighestBidder = highestBidder;
+        Placed = placed;
+        BidderName = bidderName;
+    }
+}

@@ -1,0 +1,8 @@
+namespace Api.Errors;
+
+/// <summary>409 Conflict — throw from service implementations for quick status responses.</summary>
+public class ConflictException : ApiException
+{
+    public ConflictException(string? message = null, string? code = null)
+        : base(code ?? "CONFLICT", 409, message ?? "Conflict") { }
+}

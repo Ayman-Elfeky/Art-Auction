@@ -1,0 +1,49 @@
+using System.Text.Json.Serialization;
+
+namespace Api.Models;
+
+/// <summary>Payload used for create and update artwork</summary>
+public class CreateArtworkInput
+{
+    [JsonPropertyName("title")]
+    public string Title { get; set; }
+
+    [JsonPropertyName("description")]
+    public string Description { get; set; }
+
+    [JsonPropertyName("initialPrice")]
+    public double InitialPrice { get; set; }
+
+    [JsonPropertyName("buyNowPrice")]
+    public double? BuyNowPrice { get; set; }
+
+    [JsonPropertyName("auctionStartTime")]
+    public DateTime AuctionStartTime { get; set; }
+
+    [JsonPropertyName("auctionEndTime")]
+    public DateTime AuctionEndTime { get; set; }
+
+    [JsonPropertyName("categoryName")]
+    public string CategoryName { get; set; }
+
+    [JsonPropertyName("tags")]
+    public List<string> Tags { get; set; }
+
+    [JsonPropertyName("imageUrl")]
+    public string ImageUrl { get; set; }
+
+    public CreateArtworkInput() { }
+
+    public CreateArtworkInput(string title, string description, double initialPrice, double? buyNowPrice, DateTime auctionStartTime, DateTime auctionEndTime, string categoryName, List<string> tags, string imageUrl)
+    {
+        Title = title;
+        Description = description;
+        InitialPrice = initialPrice;
+        BuyNowPrice = buyNowPrice;
+        AuctionStartTime = auctionStartTime;
+        AuctionEndTime = auctionEndTime;
+        CategoryName = categoryName;
+        Tags = tags;
+        ImageUrl = imageUrl;
+    }
+}

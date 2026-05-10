@@ -1,11 +1,14 @@
 using ArtAuction.Application.Common.Interfaces;
+using Api.Models;
 using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using VeldGenerated.Models;
-using VeldGenerated.Services;
 
 namespace Api.Services;
+
+public interface ICategoriesService
+{
+    Task<List<Category>> ListCategories();
+    Task<Category> CreateCategory(CreateCategoryInput input);
+}
 
 public class CategoriesService : ICategoriesService
 {
@@ -28,18 +31,13 @@ public class CategoriesService : ICategoriesService
 
     public async Task<Category> CreateCategory(CreateCategoryInput input)
     {
-        // EnsureAdmin();
-
         if (string.IsNullOrWhiteSpace(input.Name))
-        {
             throw new InvalidOperationException("Category name is required.");
-        }
 
         var normalizedName = input.Name.Trim();
         var normalizedLookup = normalizedName.ToLowerInvariant();
         var normalizedDescription = input.Description?.Trim();
-        var existing = await _dbContext.Categories
-            .FirstOrDefaultAsync(c => c.Name.ToLower() == normalizedLookup);
+        var existing = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == normalizedLookup);
 
         if (existing is not null)
         {
@@ -48,7 +46,6 @@ public class CategoriesService : ICategoriesService
                 existing.Description = normalizedDescription;
                 await _dbContext.SaveChangesAsync();
             }
-
             return new Category(existing.Id, existing.Name, existing.Description);
         }
 
@@ -61,27 +58,6 @@ public class CategoriesService : ICategoriesService
 
         _dbContext.Categories.Add(category);
         await _dbContext.SaveChangesAsync();
-
         return new Category(category.Id, category.Name, category.Description);
-    }
-
-    private void EnsureAdmin()
-    {
-        var httpContext = _httpContextAccessor.HttpContext
-            ?? throw new InvalidOperationException("No HTTP context found.");
-        var authHeader = httpContext.Request.Headers.Authorization.ToString();
-        if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("Missing bearer token.");
-        }
-
-        var token = authHeader["Bearer ".Length..].Trim();
-        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-        var role = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role || c.Type == "role")?.Value;
-
-        if (!string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("Only admin users can create categories.");
-        }
     }
 }

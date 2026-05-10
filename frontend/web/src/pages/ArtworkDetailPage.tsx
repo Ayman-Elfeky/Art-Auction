@@ -90,7 +90,7 @@ export function ArtworkDetailPage() {
     const connection = buildAuctionConnection(token ?? undefined);
     connection.on("bid.placed", (event: LiveBidEvent) => {
       if (event.artworkId !== id) return;
-      push(`🔨 ${event.bidderName} ${t("bid", "زايد بـ")} $${event.amount}`, "bid");
+      push(`${event.bidderName} ${t("bid", "زايد بـ")} $${event.amount}`, "bid");
       load().catch(() => undefined);
     });
     connection.on("auction.ended", (event: { winnerName: string; finalPrice: number }) => {
@@ -292,7 +292,7 @@ export function ArtworkDetailPage() {
                 {bids.map((bid, i) => (
                   <tr key={bid.id} className={i === 0 ? "top-bid" : ""}>
                     <td>{i === 0 ? "🏆" : i + 1}</td>
-                    <td>{bid.issuerId ? bid.issuerId.slice(0, 8) + "…" : "—"}</td>
+                    <td>{bid.bidderName ?? (bid.issuerId ? bid.issuerId.slice(0, 8) + "…" : "—")}</td>
                     <td style={{ fontWeight: 700, color: i === 0 ? "var(--gold-400)" : undefined }}>${bid.amount}</td>
                     <td>{new Date(bid.placed).toLocaleString()}</td>
                   </tr>

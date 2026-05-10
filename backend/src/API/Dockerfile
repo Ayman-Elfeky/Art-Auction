@@ -6,7 +6,6 @@ COPY API/API.csproj API/
 COPY Application/Application.csproj Application/
 COPY Infrastructure/Infrastructure.csproj Infrastructure/
 COPY Domain/Domain.csproj Domain/
-COPY veldgenerated/VeldGenerated.csproj veldgenerated/
 RUN dotnet restore API/API.csproj
 
 # Copy everything else and publish

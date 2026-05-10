@@ -1,4 +1,4 @@
-﻿using ArtAuction.Application.Common.Interfaces;
+using ArtAuction.Application.Common.Interfaces;
 using ArtAuction.Infrastructure.Notifications;
 using ArtAuction.Infrastructure.Persistence;
 using ArtAuction.Infrastructure.Security;
@@ -24,6 +24,8 @@ public static class DependencyInjection
             provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<INotificationService, NotificationService>();
+
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
         return services;
     }

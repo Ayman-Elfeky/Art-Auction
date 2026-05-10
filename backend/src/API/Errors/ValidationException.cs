@@ -1,0 +1,8 @@
+namespace Api.Errors;
+
+/// <summary>422 Validation Failed — throw from service implementations for quick status responses.</summary>
+public class ValidationException : ApiException
+{
+    public ValidationException(string? message = null, string? code = null)
+        : base(code ?? "VALIDATION_FAILED", 422, message ?? "Validation Failed") { }
+}

@@ -1,0 +1,25 @@
+using System.Text.Json.Serialization;
+
+namespace Api.Models;
+
+/// <summary>Data required to create a new user</summary>
+public class CreateUserInput
+{
+    [JsonPropertyName("email")]
+    public string Email { get; set; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+
+    [JsonPropertyName("password")]
+    public string Password { get; set; }
+
+    public CreateUserInput() { }
+
+    public CreateUserInput(string email, string name, string password)
+    {
+        Email = email;
+        Name = name;
+        Password = password;
+    }
+}

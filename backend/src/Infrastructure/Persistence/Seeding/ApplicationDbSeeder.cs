@@ -9,7 +9,7 @@ public static class ApplicationDbSeeder
 {
     public static async Task SeedAsync(ApplicationDbContext dbContext, CancellationToken cancellationToken = default)
     {
-        // await ResetApplicationDataAsync(dbContext, cancellationToken);
+        await ResetApplicationDataAsync(dbContext, cancellationToken);
         await SeedRolesAndPermissionsAsync(dbContext, cancellationToken);
         await SeedDemoDataAsync(dbContext, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);

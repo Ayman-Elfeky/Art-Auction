@@ -1,0 +1,12 @@
+namespace Api.Errors;
+
+public static class ApiExceptionExtensions
+{
+    public static bool IsApiException(this Exception ex) => ex is ApiException;
+    public static bool IsErrorCode(this Exception ex, string code) =>
+        ex is ApiException ae && ae.Code == code;
+    public static bool IsHttpStatus(this Exception ex, int status) =>
+        ex is ApiException ae && ae.Status == status;
+    public static ApiErrorResponse ToErrorResponse(this Exception ex) =>
+        ex is ApiException ae ? ae.ToErrorResponse() : new(ex.Message, "INTERNAL_ERROR", 500);
+}

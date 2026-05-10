@@ -6,7 +6,8 @@ import { useLang } from "../context/LangContext";
 import { useGlobalToast } from "../context/ToastContext";
 import { api } from "../lib/api";
 import { IMAGE_PLACEHOLDER, resolveImageUrl } from "../lib/images";
-import type { Artwork, CreateArtworkInput } from "../types";
+import type { Artwork, ArtworkDetail, CreateArtworkInput } from "../types";
+import { Modal } from "../components/Modal";
 
 type FormState = {
   title: string; description: string; initialPrice: string; buyNowPrice: string;
@@ -43,6 +44,7 @@ export function ArtistDashboardPage() {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [extendVal, setExtendVal] = useState<Record<string, string>>({});
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [categories, setCategories] = useState<{ id: string; name: string; description: string }[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -96,8 +98,15 @@ export function ArtistDashboardPage() {
     } catch (e) { toast.error((e as Error).message); }
   }
 
-  async function onDelete(id: string) {
-    if (!token || !confirm(t("Delete this artwork?", "حذف هذا العمل؟"))) return;
+  async function onDelete(id: string, title: string) {
+    if (!token) return;
+    setDeleteTarget({ id, title });
+  }
+
+  async function confirmDelete() {
+    if (!token || !deleteTarget) return;
+    const { id } = deleteTarget;
+    setDeleteTarget(null);
     try { await api.deleteArtwork(token, id); toast.success(t("Deleted.", "تم الحذف.")); await loadMine(); }
     catch (e) { toast.error((e as Error).message); }
   }
@@ -122,10 +131,32 @@ export function ArtistDashboardPage() {
     finally { setUploading(false); }
   }
 
-  function startEdit(item: Artwork) {
+  async function startEdit(item: Artwork) {
     setEditingId(item.id);
+    // Pre-fill what we have immediately so the form scrolls into view
     setForm({ ...EMPTY, title: item.title, categoryName: item.categoryName, categoryId: "", initialPrice: String(item.initialPrice), imageUrl: item.imageUrl });
     formRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Then load the full detail and replace all fields
+    try {
+      const detail: ArtworkDetail = await api.getArtwork(item.id);
+      const toLocal = (iso: string) => {
+        const d = new Date(iso);
+        const pad = (n: number) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      };
+      setForm({
+        title:            detail.title,
+        description:      detail.description,
+        initialPrice:     String(detail.initialPrice),
+        buyNowPrice:      detail.buyNowPrice != null ? String(detail.buyNowPrice) : "",
+        auctionStartTime: toLocal(detail.auctionStartTime),
+        auctionEndTime:   toLocal(detail.auctionEndTime),
+        categoryId:       "",
+        categoryName:     detail.categoryName,
+        tags:             detail.tags ?? [],
+        imageUrl:         detail.imageUrl,
+      });
+    } catch (e) { toast.error((e as Error).message); }
   }
 
   function statusBadge(status: string) {
@@ -137,6 +168,7 @@ export function ArtistDashboardPage() {
   }
 
   return (
+    <>
     <div className="container">
       <button className="nav-link" onClick={() => navigate(-1)} style={{ marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
         {t("← Back", "← عودة")}
@@ -273,23 +305,52 @@ export function ArtistDashboardPage() {
               <p style={{ fontSize: "0.82rem", color: "var(--gold-400)", fontWeight: 700 }}>${item.currentBid || item.initialPrice}</p>
               <div className="row" style={{ marginTop: "0.5rem" }}>
                 <button className="btn btn-secondary btn-sm" onClick={() => startEdit(item)} type="button">{t("Edit", "تعديل")}</button>
-                <button className="btn btn-danger btn-sm" onClick={() => onDelete(item.id)} type="button">{t("Delete", "حذف")}</button>
+                <button className="btn btn-danger btn-sm" onClick={() => onDelete(item.id, item.title)} type="button">{t("Delete", "حذف")}</button>
               </div>
-              <div className="row" style={{ marginTop: "0.4rem" }}>
-                <input
-                  type="datetime-local"
-                  style={{ flex: 1, fontSize: "0.78rem", padding: "0.4rem 0.6rem" }}
-                  value={extendVal[item.id] ?? ""}
-                  onChange={(e) => setExtendVal((p) => ({ ...p, [item.id]: e.target.value }))}
-                />
-                <button className="btn btn-secondary btn-sm" onClick={() => onExtend(item.id)} type="button">
-                  {t("Extend", "تمديد")}
-                </button>
+              <div style={{ marginTop: "0.4rem" }}>
+                <p style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>
+                  {t("Ends:", "ينتهي:")} {new Date(item.auctionEndTime).toLocaleString()}
+                </p>
+                <div className="row">
+                  <input
+                    type="datetime-local"
+                    style={{ flex: 1, fontSize: "0.78rem", padding: "0.4rem 0.6rem" }}
+                    min={item.auctionEndTime.slice(0, 16)}
+                    value={extendVal[item.id] ?? ""}
+                    onChange={(e) => setExtendVal((p) => ({ ...p, [item.id]: e.target.value }))}
+                  />
+                  <button className="btn btn-secondary btn-sm" onClick={() => onExtend(item.id)} type="button">
+                    {t("Extend", "تمديد")}
+                  </button>
+                </div>
               </div>
             </div>
           </article>
         ))}
       </div>
     </div>
+
+      <Modal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title={t("Delete Artwork", "حذف العمل")}
+        footer={
+          <>
+            <button className="btn btn-danger" onClick={confirmDelete}>
+              {t("Yes, Delete", "نعم، احذف")}
+            </button>
+            <button className="btn btn-secondary" onClick={() => setDeleteTarget(null)}>
+              {t("Cancel", "إلغاء")}
+            </button>
+          </>
+        }
+      >
+        <p style={{ margin: 0, lineHeight: 1.6 }}>
+          {t("Are you sure you want to delete", "هل أنت متأكد من حذف")}{" "}
+          <strong style={{ color: "var(--gold-400)" }}>{deleteTarget?.title}</strong>?
+          {" "}{t("This action cannot be undone.", "لا يمكن التراجع عن هذا الإجراء.")}
+        </p>
+      </Modal>
+    </>
   );
 }

@@ -23,7 +23,6 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Au
         RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        // Check if email already exists
         var emailExists = await _context.Users
             .AnyAsync(u => u.Email == request.Email, cancellationToken);
 

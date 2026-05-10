@@ -1,0 +1,25 @@
+using System.Text.Json.Serialization;
+
+namespace Api.Models;
+
+/// <summary>Fields that can be updated on a user</summary>
+public class UpdateUserInput
+{
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("bio")]
+    public string? Bio { get; set; }
+
+    [JsonPropertyName("role")]
+    public UserRole? Role { get; set; }
+
+    public UpdateUserInput() { }
+
+    public UpdateUserInput(string? name, string? bio, UserRole? role)
+    {
+        Name = name;
+        Bio = bio;
+        Role = role;
+    }
+}

@@ -1,12 +1,30 @@
 using ArtAuction.Application.Features.Auth.Commands.Login;
 using ArtAuction.Application.Features.Auth.Commands.Register;
 using ArtAuction.Application.Common.Interfaces;
+using Api.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using VeldGenerated.Models;
-using VeldGenerated.Services;
 
 namespace Api.Services;
+
+/// <summary>Authentication and session management</summary>
+public interface IAuthService
+{
+    /// <summary>Log in with credentials</summary>
+    Task<AuthToken> Login(LoginInput input);
+
+    /// <summary>Register a new account</summary>
+    Task<AuthToken> Register(RegisterInput input);
+
+    /// <summary>Register a new artist account (pending approval)</summary>
+    Task<AuthToken> RegisterArtist(RegisterArtistInput input);
+
+    /// <summary>Get the currently authenticated user</summary>
+    Task<User> GetMe();
+
+    /// <summary>Log out and invalidate session</summary>
+    Task<SuccessMessage> Logout();
+}
 
 public class AuthService : IAuthService
 {
@@ -78,14 +96,14 @@ public class AuthService : IAuthService
             domainUser.CreatedAt);
     }
 
-    private static VeldGenerated.Models.UserRole MapRole(ArtAuction.Domain.Enums.UserRole role)
+    private static Models.UserRole MapRole(ArtAuction.Domain.Enums.UserRole role)
     {
         return role switch
         {
-            ArtAuction.Domain.Enums.UserRole.Admin => VeldGenerated.Models.UserRole.Admin,
-            ArtAuction.Domain.Enums.UserRole.Buyer => VeldGenerated.Models.UserRole.User,
-            ArtAuction.Domain.Enums.UserRole.Artist => VeldGenerated.Models.UserRole.Artist,
-            _ => VeldGenerated.Models.UserRole.User
+            ArtAuction.Domain.Enums.UserRole.Admin => Models.UserRole.Admin,
+            ArtAuction.Domain.Enums.UserRole.Buyer => Models.UserRole.User,
+            ArtAuction.Domain.Enums.UserRole.Artist => Models.UserRole.Artist,
+            _ => Models.UserRole.User
         };
     }
 

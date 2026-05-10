@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using VeldGenerated.Services;
-using VeldGenerated.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,8 +74,7 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddSignalR();
-builder.Services.AddControllers()
-    .AddApplicationPart(typeof(AuthController).Assembly);
+builder.Services.AddControllers();
 builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsersService, UsersService>();

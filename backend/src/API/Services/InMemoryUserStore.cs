@@ -1,4 +1,4 @@
-using VeldGenerated.Models;
+using Api.Models;
 
 namespace Api.Services;
 

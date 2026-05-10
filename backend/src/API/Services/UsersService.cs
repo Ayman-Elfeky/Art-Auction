@@ -1,9 +1,27 @@
 using ArtAuction.Application.Common.Interfaces;
+using Api.Models;
 using Microsoft.EntityFrameworkCore;
-using VeldGenerated.Models;
-using VeldGenerated.Services;
 
 namespace Api.Services;
+
+/// <summary>User management</summary>
+public interface IUsersService
+{
+    /// <summary>List all users with optional filters</summary>
+    Task<List<User>> ListUsers(Dictionary<string, string> query);
+
+    /// <summary>Get a single user by ID</summary>
+    Task<User> GetUser(string Id);
+
+    /// <summary>Create a new user</summary>
+    Task<User> CreateUser(CreateUserInput input);
+
+    /// <summary>Update an existing user</summary>
+    Task<User> UpdateUser(string Id, UpdateUserInput input);
+
+    /// <summary>Delete a user</summary>
+    Task<SuccessMessage> DeleteUser(string Id);
+}
 
 public class UsersService : IUsersService
 {

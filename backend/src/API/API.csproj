@@ -21,7 +21,4 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../veldgenerated/VeldGenerated.csproj" />
-  </ItemGroup>
 </Project>

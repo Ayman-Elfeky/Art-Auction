@@ -9,7 +9,20 @@ public static class ApplicationDbSeeder
 {
     public static async Task SeedAsync(ApplicationDbContext dbContext, CancellationToken cancellationToken = default)
     {
-        await ResetApplicationDataAsync(dbContext, cancellationToken);
+        var forceReset = Environment.GetEnvironmentVariable("RESET_DB") == "true";
+        var hasUsers = await dbContext.Users.AnyAsync(cancellationToken);
+
+        if (hasUsers && !forceReset)
+        {
+            // Database is already seeded and force reset is not requested. Skip seeding.
+            return;
+        }
+
+        if (forceReset)
+        {
+            await ResetApplicationDataAsync(dbContext, cancellationToken);
+        }
+
         await SeedRolesAndPermissionsAsync(dbContext, cancellationToken);
         await SeedDemoDataAsync(dbContext, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);

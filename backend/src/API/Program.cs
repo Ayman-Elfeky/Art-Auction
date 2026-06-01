@@ -58,16 +58,23 @@ builder.Services
         };
     });
 builder.Services.AddAuthorization(PolicyRegistration.Register);
+var allowedOriginsSetting = builder.Configuration["Cors:AllowedOrigins"];
+var allowedOrigins = !string.IsNullOrWhiteSpace(allowedOriginsSetting)
+    ? allowedOriginsSetting.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    : new[]
+    {
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:4173",
+        "https://art-auction-seven.vercel.app",
+        "http://127.0.0.1:4173"
+    };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:5173",
-                "http://127.0.0.1:5173",
-                "http://localhost:4173",
-                "https://art-auction-seven.vercel.app",
-                "http://127.0.0.1:4173")
+        policy.WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();

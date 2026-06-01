@@ -1,0 +1,51 @@
+name: Deploy Backend to EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  build-and-verify:
+    name: Build Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0'
+
+      - name: Restore Dependencies
+        run: dotnet restore backend/ArtAuction.sln
+
+      - name: Build Application
+        run: dotnet build backend/ArtAuction.sln --configuration Release --no-restore
+
+  deploy-to-ec2:
+    name: Deploy to EC2
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Execute Deploy Commands via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            # Navigate to your backend directory on EC2 (update path if different)
+            cd ${{ secrets.EC2_DEPLOY_PATH }}
+            
+            # Fetch latest changes
+            git pull
+            
+            # Restart containers with the updated code
+            docker compose down
+            docker compose up -d --build
